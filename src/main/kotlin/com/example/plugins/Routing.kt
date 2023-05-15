@@ -1,11 +1,11 @@
 package com.example.plugins
 
-import com.auth0.jwt.JWTVerifier
 import com.example.auth.*
+import com.example.auth.request.AuthRequest
 import com.example.auth.request.RegisterRequest
 import com.example.auth.response.RegisterResponse
-import com.example.db.dao.DAOUsersFacade
-import com.example.db.dao.DAOUsersFacadeImpl
+import com.example.db.dao.users.UsersDao
+import com.example.db.dao.users.UsersDaoImpl
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.statuspages.*
@@ -15,17 +15,16 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
-import io.ktor.server.util.*
 
 fun Application.configureRouting() {
 
-    val userDao: DAOUsersFacade = DAOUsersFacadeImpl()
+    val userDao: UsersDao = UsersDaoImpl()
     val jwtHelper: JWTHelper = JWTHelperImpl()
     val passwordEncryptor: PasswordEncryptor = PasswordEncryptorImpl()
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
+            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
         }
     }
 
@@ -34,7 +33,6 @@ fun Application.configureRouting() {
             verifier(jwtHelper.verifier)
             validate { credential ->
                 credential.payload.getClaim("userId").asInt()?.let { userId ->
-                    // do database query to find Principal subclass
                     JWTPrincipal(credential.payload)
                 }
             }
@@ -43,11 +41,34 @@ fun Application.configureRouting() {
             }
         }
     }
-    
+
     routing {
         get("/") {
             call.respondText("Первый бекенд!")
             //todo сделать отображение Swagger спецификации
+        }
+
+        post("auth") {
+            try {
+                val authRequest = call.receive<AuthRequest>()
+                val user = userDao.getUserByLogin(authRequest.login)
+
+                if (user != null && passwordEncryptor.validatePassword(authRequest.password, user.password)) {
+                    val tokens = jwtHelper.createTokens(user)
+                    val registerResponse = RegisterResponse(
+                        user.id,
+                        user.login,
+                        user.fullName,
+                        user.email,
+                        tokens
+                    )
+                    call.respond(registerResponse)
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized, "Неверный логин или пароль!")
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, e.message ?: "Ошибка!!!")
+            }
         }
 
         post("register") {
@@ -58,7 +79,8 @@ fun Application.configureRouting() {
             val user = userDao.addNewUser(
                 registerRequest.login,
                 passwordEncryptor.encryptPassword(registerRequest.password),
-                registerRequest.fullName
+                registerRequest.fullName,
+                registerRequest.email
             )
             if (user != null) {
                 val tokens = jwtHelper.createTokens(user)
@@ -66,6 +88,7 @@ fun Application.configureRouting() {
                     user.id,
                     user.login,
                     user.fullName,
+                    user.email,
                     tokens
                 )
                 call.respond(registerResponse)
