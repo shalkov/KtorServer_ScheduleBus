@@ -11,8 +11,10 @@ class JWTHelperImpl : JWTHelper {
 
     private val secret = "bkFwb2xpdGE2OTk5"
     private val issuer = "bkFwb2xpdGE2OTk5"
-    private val validityAccessInMs: Long = 1200000L // 20 минут
-    private val refreshValidityInMs: Long = 3600000L * 24L * 30L // 30 дней
+    //private val validityAccessInMs: Long = 1200000L // 20 минут
+    private val validityAccessInMs: Long = 60000L // 1 минута
+    //private val refreshValidityInMs: Long = 3600000L * 24L * 30L // 30 дней
+    private val refreshValidityInMs: Long = 120000L // 2 минуты
     private val algorithm = Algorithm.HMAC512(secret)
 
     override val verifier: JWTVerifier = JWT
@@ -38,6 +40,10 @@ class JWTHelperImpl : JWTHelper {
 
     override fun verifyTokenType(token: String): String {
         return verifier.verify(token).claims["tokenType"]!!.asString()
+    }
+
+    override fun isRefreshToken(token: String): Boolean {
+        return verifyTokenType(token) == "refreshToken"
     }
 
     private fun createAccessToken(user: User, expiration: Date) = JWT.create()
@@ -66,6 +72,8 @@ interface JWTHelper {
     val verifier: JWTVerifier
     fun createTokens(user: User): TokenResponse
     fun verifyTokenType(token: String): String
+
+    fun isRefreshToken(token: String): Boolean
     fun verifyToken(token: String): Int?
     fun getTokenExpiration(token: String): Date
 }

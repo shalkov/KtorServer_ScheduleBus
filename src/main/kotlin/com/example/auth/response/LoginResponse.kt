@@ -1,6 +1,6 @@
 package com.example.auth.response
 
-data class RegisterResponse(
+data class LoginResponse(
     val id: Int,
     val login: String,
     val fullName: String?,

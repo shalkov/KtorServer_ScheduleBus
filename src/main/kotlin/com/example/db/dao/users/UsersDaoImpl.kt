@@ -16,7 +16,7 @@ class UsersDaoImpl : UsersDao {
         }
     }
 
-    override suspend fun user(id: Int): User? {
+    override suspend fun getUserById(id: Int): User? {
         return dbQuery {
             UsersTable
                 .select { UsersTable.id eq id }
