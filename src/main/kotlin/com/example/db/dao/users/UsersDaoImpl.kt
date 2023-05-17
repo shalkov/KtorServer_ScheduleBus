@@ -2,6 +2,7 @@ package com.example.db.dao.users
 
 import com.example.db.DbFactory.dbQuery
 import com.example.db.models.User
+import com.example.db.models.UserRole
 import com.example.db.tables.UsersTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -31,7 +32,8 @@ class UsersDaoImpl : UsersDao {
         login: String,
         password: String,
         fullName: String,
-        email: String
+        email: String,
+        roles: List<UserRole>
     ): User? {
         return dbQuery {
             val insertStatement = UsersTable.insert {
@@ -39,6 +41,7 @@ class UsersDaoImpl : UsersDao {
                 it[UsersTable.password] = password
                 it[UsersTable.fullName] = fullName
                 it[UsersTable.email] = email
+                it[UsersTable.roles] = UserRole.toString(roles)
             }
             insertStatement.resultedValues?.singleOrNull()?.let {
                 resultRowToUser(it)
@@ -51,7 +54,8 @@ class UsersDaoImpl : UsersDao {
         login: String,
         password: String,
         fullName: String,
-        email: String
+        email: String,
+        roles: List<UserRole>
     ): Boolean {
         return dbQuery {
             val updateStatementCount = UsersTable.update({
@@ -61,6 +65,7 @@ class UsersDaoImpl : UsersDao {
                 it[UsersTable.password] = password
                 it[UsersTable.fullName] = password
                 it[UsersTable.email] = email
+                it[UsersTable.roles] = UserRole.toString(roles)
             }
             updateStatementCount > 0
         }
@@ -85,6 +90,7 @@ class UsersDaoImpl : UsersDao {
         login = row[UsersTable.login],
         password = row[UsersTable.password],
         fullName = row[UsersTable.fullName],
-        email = row[UsersTable.email]
+        email = row[UsersTable.email],
+        roles = UserRole.toEnumList(row[UsersTable.roles])
     )
 }

@@ -10,6 +10,7 @@ import com.example.db.dao.tokens.TokensDao
 import com.example.db.dao.tokens.TokensDaoImpl
 import com.example.db.dao.users.UsersDao
 import com.example.db.dao.users.UsersDaoImpl
+import com.example.db.models.UserRole
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.statuspages.*
@@ -18,7 +19,6 @@ import io.ktor.server.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import java.text.SimpleDateFormat
 
@@ -90,6 +90,7 @@ fun Application.configureRouting() {
                         user.login,
                         user.fullName,
                         user.email,
+                        user.roles,
                         tokens
                     )
                     call.respond(authResponse)
@@ -113,7 +114,8 @@ fun Application.configureRouting() {
                         registerRequest.login,
                         passwordEncryptor.encryptPassword(registerRequest.password),
                         registerRequest.fullName,
-                        registerRequest.email
+                        registerRequest.email,
+                        listOf(UserRole.USER)
                     )
                     if (user != null) {
                         val tokens = jwtHelper.createTokens(user)
@@ -124,6 +126,7 @@ fun Application.configureRouting() {
                             user.login,
                             user.fullName,
                             user.email,
+                            user.roles,
                             tokens
                         )
                         call.respond(registerResponse)
@@ -181,14 +184,25 @@ fun Application.configureRouting() {
         }
 
         authenticate {
-            // Авторизованная зона
-            get("/auth_zone") {
-                val principal = call.principal<JWTPrincipal>()
-                val userId = principal?.payload?.getClaim("userId")?.asInt()
-                val expiresAt = principal?.expiresAt?.time?.minus(System.currentTimeMillis())
+            // Авторизованная зона и роль админ
+            withRoles(UserRole.ADMIN.role) {
+                get("/admin") {
+                    val principal = call.principal<JWTPrincipal>()
+                    val userId = principal?.payload?.getClaim("userId")?.asInt()
+                    val roles = principal?.payload?.getClaim("roles")?.asList(UserRole::class.java)?.toSet()
+                    val expiresAt = principal?.expiresAt?.time?.minus(System.currentTimeMillis())
 
-                val user = userDao.getUserById(userId ?: 0)
-                call.respondText("Привет, ${user?.login}! Токен протухнет через: $expiresAt ms.")
+                    val user = userDao.getUserById(userId ?: 0)
+                    call.respondText("Привет, ${user?.login}! Токен протухнет через: $expiresAt ms.\n" +
+                            "$roles")
+
+                }
+            }
+
+            withRoles {
+                get("/anyone") {
+                    call.respondText { "For anyone" }
+                }
             }
         }
 

@@ -11,10 +11,10 @@ class JWTHelperImpl : JWTHelper {
 
     private val secret = "bkFwb2xpdGE2OTk5"
     private val issuer = "bkFwb2xpdGE2OTk5"
-    //private val validityAccessInMs: Long = 1200000L // 20 минут
-    private val validityAccessInMs: Long = 60000L // 1 минута
-    //private val refreshValidityInMs: Long = 3600000L * 24L * 30L // 30 дней
-    private val refreshValidityInMs: Long = 120000L // 2 минуты
+    private val validityAccessInMs: Long = 1200000L // 20 минут
+    //private val validityAccessInMs: Long = 60000L // 1 минута
+    private val refreshValidityInMs: Long = 3600000L * 24L * 30L // 30 дней
+    //private val refreshValidityInMs: Long = 120000L // 2 минуты
     private val algorithm = Algorithm.HMAC512(secret)
 
     override val verifier: JWTVerifier = JWT
@@ -51,6 +51,7 @@ class JWTHelperImpl : JWTHelper {
         .withIssuer(issuer)
         .withClaim("userId", user.id)
         .withClaim("tokenType", "accessToken")
+        .withClaim("roles", user.roles.map { it.role })
         .withExpiresAt(expiration)
         .sign(algorithm)
 
@@ -59,6 +60,7 @@ class JWTHelperImpl : JWTHelper {
         .withIssuer(issuer)
         .withClaim("userId", user.id)
         .withClaim("tokenType", "refreshToken")
+        .withClaim("roles", user.roles.map { it.role })
         .withExpiresAt(expiration)
         .sign(algorithm)
 
