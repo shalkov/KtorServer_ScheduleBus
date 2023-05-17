@@ -7,6 +7,7 @@ val exposed_version: String by project
 val hikaricp_version: String by project
 val bcrypt_version: String by project
 val flyway_version: String by project
+val koinVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.8.21"
@@ -57,4 +58,7 @@ dependencies {
     // Для того чтобы шифровать пароли
     implementation("org.mindrot:jbcrypt:$bcrypt_version")
 
+    // DI
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
 }

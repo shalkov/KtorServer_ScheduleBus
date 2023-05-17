@@ -3,6 +3,7 @@ package com.example.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.Consts.USER_ID
 import com.example.auth.response.TokenResponse
 import com.example.db.models.User
 import java.util.*
@@ -23,7 +24,7 @@ class JWTHelperImpl : JWTHelper {
         .build()
 
     override fun verifyToken(token: String): Int? {
-        return verifier.verify(token).claims["userId"]?.asInt()
+        return verifier.verify(token).claims[USER_ID]?.asInt()
     }
 
     override fun getTokenExpiration(token: String): Date {
@@ -33,7 +34,7 @@ class JWTHelperImpl : JWTHelper {
     /**
      * Создаёт пару токенов для выбранного пользователя
      */
-    override fun createTokens(user: User) = TokenResponse(
+    override fun createTokens(user: User) = TokensModel(
         createAccessToken(user, createTokenExpirationDate(validityAccessInMs)),
         createRefreshToken(user, createTokenExpirationDate(refreshValidityInMs))
     )
@@ -49,7 +50,7 @@ class JWTHelperImpl : JWTHelper {
     private fun createAccessToken(user: User, expiration: Date) = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
-        .withClaim("userId", user.id)
+        .withClaim(USER_ID, user.id)
         .withClaim("tokenType", "accessToken")
         .withClaim("roles", user.roles.map { it.role })
         .withExpiresAt(expiration)
@@ -58,7 +59,7 @@ class JWTHelperImpl : JWTHelper {
     private fun createRefreshToken(user: User, expiration: Date) = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
-        .withClaim("userId", user.id)
+        .withClaim(USER_ID, user.id)
         .withClaim("tokenType", "refreshToken")
         .withClaim("roles", user.roles.map { it.role })
         .withExpiresAt(expiration)
@@ -72,7 +73,7 @@ class JWTHelperImpl : JWTHelper {
 
 interface JWTHelper {
     val verifier: JWTVerifier
-    fun createTokens(user: User): TokenResponse
+    fun createTokens(user: User): TokensModel
     fun verifyTokenType(token: String): String
 
     fun isRefreshToken(token: String): Boolean

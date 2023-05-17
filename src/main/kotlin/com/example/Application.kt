@@ -1,10 +1,12 @@
 package com.example
 
+import com.example.auth.JWTHelper
 import com.example.db.DbFactory
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
+import org.koin.ktor.ext.inject
 
 fun main() {
     embeddedServer(
@@ -16,9 +18,12 @@ fun main() {
 }
 
 fun Application.module() {
+    val jwtHelper by inject<JWTHelper>()
+
     DbFactory.init()
     configureSerialization()
+    configureKoin()
     //configureHTTP()
-    configureSecurity()
+    configureSecurity(jwtHelper)
     configureRouting()
 }
