@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UsersDaoImpl : UsersDao {
 
-    override suspend fun allUsers(): List<User> {
+    override suspend fun getAllUsers(): List<User> {
         return dbQuery {
             UsersTable.selectAll().map {
                 resultRowToUser(it)
@@ -33,7 +33,7 @@ class UsersDaoImpl : UsersDao {
         password: String,
         fullName: String,
         email: String,
-        roles: List<UserRole>
+        role: UserRole
     ): User? {
         return dbQuery {
             val insertStatement = UsersTable.insert {
@@ -41,7 +41,7 @@ class UsersDaoImpl : UsersDao {
                 it[UsersTable.password] = password
                 it[UsersTable.fullName] = fullName
                 it[UsersTable.email] = email
-                it[UsersTable.roles] = UserRole.toString(roles)
+                it[UsersTable.role] = role.roleStr
             }
             insertStatement.resultedValues?.singleOrNull()?.let {
                 resultRowToUser(it)
@@ -55,7 +55,7 @@ class UsersDaoImpl : UsersDao {
         password: String,
         fullName: String,
         email: String,
-        roles: List<UserRole>
+        role: UserRole
     ): Boolean {
         return dbQuery {
             val updateStatementCount = UsersTable.update({
@@ -63,9 +63,9 @@ class UsersDaoImpl : UsersDao {
             }) {
                 it[UsersTable.login] = login
                 it[UsersTable.password] = password
-                it[UsersTable.fullName] = password
+                it[UsersTable.fullName] = fullName
                 it[UsersTable.email] = email
-                it[UsersTable.roles] = UserRole.toString(roles)
+                it[UsersTable.role] = role.roleStr
             }
             updateStatementCount > 0
         }
@@ -91,6 +91,6 @@ class UsersDaoImpl : UsersDao {
         password = row[UsersTable.password],
         fullName = row[UsersTable.fullName],
         email = row[UsersTable.email],
-        roles = UserRole.toEnumList(row[UsersTable.roles])
+        role = UserRole.getByName(row[UsersTable.role])
     )
 }

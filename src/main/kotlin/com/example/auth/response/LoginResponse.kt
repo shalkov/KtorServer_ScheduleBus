@@ -13,6 +13,6 @@ data class LoginResponse(
     val login: String,
     val fullName: String?,
     val email: String,
-    val roles: List<UserRole>,
+    val role: UserRole,
     val tokens: TokensModel
 ) : BaseResponse

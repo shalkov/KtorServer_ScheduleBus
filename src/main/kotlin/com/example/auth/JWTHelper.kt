@@ -3,6 +3,10 @@ package com.example.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.example.Consts.ACCESS_TOKEN_PARAM
+import com.example.Consts.ACCESS_TOKEN_VALIDITY_ML
+import com.example.Consts.REFRESH_TOKEN_PARAM
+import com.example.Consts.REFRESH_TOKEN_VALIDITY_ML
 import com.example.Consts.USER_ID
 import com.example.auth.response.TokenResponse
 import com.example.db.models.User
@@ -12,9 +16,9 @@ class JWTHelperImpl : JWTHelper {
 
     private val secret = "bkFwb2xpdGE2OTk5"
     private val issuer = "bkFwb2xpdGE2OTk5"
-    private val validityAccessInMs: Long = 1200000L // 20 минут
+    private val validityAccessInMs: Long = ACCESS_TOKEN_VALIDITY_ML
     //private val validityAccessInMs: Long = 60000L // 1 минута
-    private val refreshValidityInMs: Long = 3600000L * 24L * 30L // 30 дней
+    private val refreshValidityInMs: Long = REFRESH_TOKEN_VALIDITY_ML
     //private val refreshValidityInMs: Long = 120000L // 2 минуты
     private val algorithm = Algorithm.HMAC512(secret)
 
@@ -51,8 +55,8 @@ class JWTHelperImpl : JWTHelper {
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim(USER_ID, user.id)
-        .withClaim("tokenType", "accessToken")
-        .withClaim("roles", user.roles.map { it.role })
+        .withClaim("tokenType", ACCESS_TOKEN_PARAM)
+        .withClaim("role", user.role.roleStr)
         .withExpiresAt(expiration)
         .sign(algorithm)
 
@@ -60,8 +64,8 @@ class JWTHelperImpl : JWTHelper {
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim(USER_ID, user.id)
-        .withClaim("tokenType", "refreshToken")
-        .withClaim("roles", user.roles.map { it.role })
+        .withClaim("tokenType", REFRESH_TOKEN_PARAM)
+        .withClaim("role", user.role.roleStr)
         .withExpiresAt(expiration)
         .sign(algorithm)
 

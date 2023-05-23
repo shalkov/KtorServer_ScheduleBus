@@ -27,5 +27,10 @@ data class GeneralResponse(
             State.SUCCESS,
             message ?: EMPTY_MESSAGE
         )
+
+        fun serverError() = GeneralResponse(
+            State.FAILED,
+            EMPTY_MESSAGE
+        )
     }
 }

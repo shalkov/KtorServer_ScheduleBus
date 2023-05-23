@@ -6,33 +6,18 @@ data class User(
     val password: String,
     val fullName: String,
     val email: String,
-    val roles: List<UserRole>
+    val role: UserRole
 )
 
-enum class UserRole(val role: String) {
+enum class UserRole(val roleStr: String) {
     ADMIN("ADMIN"),
     MODERATOR("MODERATOR"),
     USER("USER");
 
     companion object {
 
-        private val SEPARATOR: String = ","
-
-        fun toEnumList(rolesStr: String): List<UserRole> {
-            val rolesFromBd = rolesStr.split(SEPARATOR)
-            val allRoles = UserRole.values() // все роли
-            val resultRoles = mutableListOf<UserRole>()
-
-            allRoles.forEach {
-                if (rolesFromBd.contains(it.role)) {
-                    resultRoles.add(it)
-                }
-            }
-            return resultRoles
-        }
-
-        fun toString(roles: List<UserRole>): String {
-            return roles.joinToString(SEPARATOR) { it.role }
+        fun getByName(roleStr: String): UserRole {
+            return UserRole.values().firstOrNull { it.roleStr == roleStr } ?: USER
         }
     }
 }

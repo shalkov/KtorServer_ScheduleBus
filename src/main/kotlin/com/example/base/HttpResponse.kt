@@ -22,6 +22,10 @@ sealed class HttpResponse<T : BaseResponse> {
         override val code: HttpStatusCode = HttpStatusCode.Unauthorized
     }
 
+    data class ServerError<T : BaseResponse>(override val body: T) : HttpResponse<T>() {
+        override val code: HttpStatusCode = HttpStatusCode.InternalServerError
+    }
+
     companion object {
         fun <T : BaseResponse> ok(response: T) = Ok(body = response)
 
@@ -30,6 +34,7 @@ sealed class HttpResponse<T : BaseResponse> {
         fun <T : BaseResponse> badRequest(response: T) = BadRequest(body = response)
 
         fun <T : BaseResponse> unauth(response: T) = Unauthorized(body = response)
+        fun <T : BaseResponse> serverError(response: T) = ServerError(body = response)
     }
 }
 
@@ -39,5 +44,6 @@ fun generateHttpResponse(response: BaseResponse): HttpResponse<BaseResponse> {
         State.NOT_FOUND -> HttpResponse.notFound(response)
         State.FAILED -> HttpResponse.badRequest(response)
         State.UNAUTHORIZED -> HttpResponse.unauth(response)
+        State.SERVER_ERROR -> HttpResponse.serverError(GeneralResponse.serverError())
     }
 }

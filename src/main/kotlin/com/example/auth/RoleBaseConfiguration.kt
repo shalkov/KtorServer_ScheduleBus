@@ -33,7 +33,7 @@ fun Route.withRoles(vararg roles: String, build: Route.() -> Unit) {
 val RoleAuthorizationPlugin = createRouteScopedPlugin("RoleAuthorizationPlugin", ::RoleBaseConfiguration) {
     on(AuthenticationChecked) { call ->
         val principal = call.principal<JWTPrincipal>() ?: return@on
-        val roles = principal.payload.getClaim("roles").asList(String::class.java).toSet()
+        val roles = principal.payload.getClaim("role").asString().toSet()
 
         if (pluginConfig.requiredRoles.isNotEmpty() && roles.intersect(pluginConfig.requiredRoles).isEmpty()) {
             call.respondText("У вас нет доступа для просмотра этого ресурса", status = HttpStatusCode.Unauthorized)

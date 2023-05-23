@@ -8,14 +8,14 @@ import com.example.db.models.UserRole
  */
 interface UsersDao {
 
-    suspend fun allUsers(): List<User>
+    suspend fun getAllUsers(): List<User>
     suspend fun getUserById(id: Int): User?
     suspend fun addNewUser(
         login: String,
         password: String,
         fullName: String,
         email: String,
-        roles: List<UserRole>
+        role: UserRole
     ): User?
     suspend fun editUser(
         id: Int,
@@ -23,7 +23,7 @@ interface UsersDao {
         password: String,
         fullName: String,
         email: String,
-        roles: List<UserRole>
+        role: UserRole
     ): Boolean
     suspend fun deleteUser(id: Int): Boolean
 

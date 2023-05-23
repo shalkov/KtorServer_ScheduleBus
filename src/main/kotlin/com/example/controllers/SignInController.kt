@@ -38,7 +38,7 @@ class SignInController : BaseAuthController(), KoinComponent {
                     user.login,
                     user.fullName,
                     user.email,
-                    user.roles,
+                    user.role,
                     tokens
                 )
             } else {

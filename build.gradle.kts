@@ -61,4 +61,7 @@ dependencies {
     // DI
     implementation("io.insert-koin:koin-ktor:$koinVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+
+    // Чтобы рисовать страничку html по шаблону
+    implementation("io.ktor:ktor-server-freemarker:$ktor_version")
 }

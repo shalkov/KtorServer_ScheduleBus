@@ -44,7 +44,7 @@ class SignUpController : BaseAuthController(), KoinComponent {
                 passwordEncryptor.encryptPassword(registerRequest.password),
                 registerRequest.fullName,
                 registerRequest.email,
-                listOf(UserRole.USER)
+                UserRole.USER
             ) ?: throw BadRequestException("Не удалось добавить пользователя в БД")
 
             val tokens = jwtHelper.createTokens(newUser)
@@ -57,7 +57,7 @@ class SignUpController : BaseAuthController(), KoinComponent {
                 newUser.login,
                 newUser.fullName,
                 newUser.email,
-                newUser.roles,
+                newUser.role,
                 tokens
             )
         } catch (e: Exception) {

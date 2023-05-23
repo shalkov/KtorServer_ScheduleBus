@@ -6,6 +6,8 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
+import freemarker.cache.ClassTemplateLoader
+import io.ktor.server.freemarker.*
 import org.koin.ktor.ext.inject
 
 fun main() {
@@ -19,6 +21,9 @@ fun main() {
 
 fun Application.module() {
     val jwtHelper by inject<JWTHelper>()
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
 
     DbFactory.init()
     configureSerialization()
@@ -26,4 +31,5 @@ fun Application.module() {
     //configureHTTP()
     configureSecurity(jwtHelper)
     configureRouting()
+    configureRoutingAdmin()
 }
