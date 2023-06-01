@@ -1,0 +1,170 @@
+{
+  "route": {
+    "id": 1,
+    "routeNumber": "310",
+    "name": "Графское - Воронеж",
+    "description": "",
+    "departureStart": {
+      "departureFrom": "Графское",
+      "timeList": [
+        {
+          "time": "6:05",
+          "description": "Отправление от Парижской Коммуны"
+        },
+        {
+          "time": "6:20",
+          "description": ""
+        },
+        {
+          "time": "8:00",
+          "description": ""
+        },
+        {
+          "time": "8:50",
+          "description": ""
+        },
+        {
+          "time": "9:40",
+          "description": ""
+        },
+        {
+          "time": "10:25",
+          "description": ""
+        },
+        {
+          "time": "11:15",
+          "description": ""
+        },
+        {
+          "time": "12:10",
+          "description": ""
+        },
+        {
+          "time": "13:00",
+          "description": ""
+        },
+        {
+          "time": "13:50",
+          "description": ""
+        },
+        {
+          "time": "14:35",
+          "description": ""
+        },
+        {
+          "time": "15:20",
+          "description": ""
+        },
+        {
+          "time": "16:10",
+          "description": ""
+        },
+        {
+          "time": "16:55",
+          "description": ""
+        },
+        {
+          "time": "17:45",
+          "description": ""
+        },
+        {
+          "time": "18:30",
+          "description": ""
+        },
+        {
+          "time": "19:20",
+          "description": ""
+        },
+        {
+          "time": "20:00",
+          "description": ""
+        }
+      ]
+    },
+    "departureEnd": {
+      "departureFrom": "Воронеж",
+      "timeList": [
+        {
+          "time": "6:50",
+          "description": ""
+        },
+        {
+          "time": "7:40",
+          "description": ""
+        },
+        {
+          "time": "8:30",
+          "description": ""
+        },
+        {
+          "time": "9:15",
+          "description": ""
+        },
+        {
+          "time": "10:05",
+          "description": ""
+        },
+        {
+          "time": "11:00",
+          "description": ""
+        },
+        {
+          "time": "11:50",
+          "description": ""
+        },
+        {
+          "time": "12:40",
+          "description": ""
+        },
+        {
+          "time": "13:25",
+          "description": ""
+        },
+        {
+          "time": "14:10",
+          "description": ""
+        },
+        {
+          "time": "15:00",
+          "description": ""
+        },
+        {
+          "time": "15:40",
+          "description": ""
+        },
+        {
+          "time": "16:35",
+          "description": ""
+        },
+        {
+          "time": "17:20",
+          "description": ""
+        },
+        {
+          "time": "18:15",
+          "description": ""
+        },
+        {
+          "time": "18:50",
+          "description": ""
+        },
+        {
+          "time": "19:30",
+          "description": ""
+        },
+        {
+          "time": "20:10",
+          "description": "Идёт до Парижской Коммуны"
+        },
+        {
+          "time": "21:00",
+          "description": ""
+        }
+      ]
+    }
+  },
+  "info": {
+    "status": "SUCCESS",
+    "message": "Маршрут успешно предоставлен!"
+  }
+}
