@@ -5,7 +5,7 @@ import io.ktor.client.statement.*
 import io.ktor.server.testing.*
 import kotlin.test.*
 import io.ktor.http.*
-import ru.shalkoff.bus_schedule.plugins.configureRouting
+import ru.shalkoff.bus_schedule.plugins.route.configureRouting
 
 class ApplicationTest {
     @Test

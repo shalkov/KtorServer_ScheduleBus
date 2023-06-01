@@ -1,6 +1,6 @@
 package ru.shalkoff.bus_schedule.db.dao.tokens
 
-import ru.shalkoff.bus_schedule.db.models.Token
+import ru.shalkoff.bus_schedule.db.models.TokenModel
 
 interface TokensDao {
 
@@ -8,7 +8,7 @@ interface TokensDao {
         userId: Int,
         refreshToken: String,
         expirationTime: String
-    ): Token?
+    ): TokenModel?
 
     suspend fun updateToken(
         userId: Int,
@@ -16,7 +16,7 @@ interface TokensDao {
         expirationTime: String
     ): Boolean
 
-    suspend fun getAllById(userId: Int): List<Token>
+    suspend fun getAllById(userId: Int): List<TokenModel>
 
     suspend fun exists(userId: Int, token: String): Boolean
     suspend fun deleteAllExpiredByUserId(userId: Int, currentTime: String): Boolean

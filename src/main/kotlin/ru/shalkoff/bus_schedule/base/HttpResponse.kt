@@ -39,7 +39,7 @@ sealed class HttpResponse<T : BaseResponse> {
 }
 
 fun generateHttpResponse(response: BaseResponse): HttpResponse<BaseResponse> {
-    return when (response.status) {
+    return when (response.info.status) {
         State.SUCCESS -> HttpResponse.ok(response)
         State.NOT_FOUND -> HttpResponse.notFound(response)
         State.FAILED -> HttpResponse.badRequest(response)

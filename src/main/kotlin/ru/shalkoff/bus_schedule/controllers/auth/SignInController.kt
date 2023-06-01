@@ -1,17 +1,17 @@
-package ru.shalkoff.bus_schedule.controllers
+package ru.shalkoff.bus_schedule.controllers.auth
 
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.auth.PasswordEncryptor
-import ru.shalkoff.bus_schedule.auth.request.AuthRequest
-import ru.shalkoff.bus_schedule.auth.response.LoginResponse
+import ru.shalkoff.bus_schedule.network.request.AuthRequest
+import ru.shalkoff.bus_schedule.network.response.LoginResponse
 import ru.shalkoff.bus_schedule.base.BaseResponse
 import ru.shalkoff.bus_schedule.base.GeneralResponse
 import ru.shalkoff.bus_schedule.base.State
 import ru.shalkoff.bus_schedule.db.dao.tokens.TokensDao
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
-import io.ktor.server.plugins.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ru.shalkoff.bus_schedule.base.InfoResponse
 
 /**
  * Контроллер авторизации
@@ -32,14 +32,16 @@ class SignInController : BaseAuthController(), KoinComponent {
                 addRefreshTokenToStore(user.id, tokens.refreshToken, tokensDao)
 
                 LoginResponse(
-                    status = State.SUCCESS,
-                    message = "Авторизация прошла успешно!",
                     user.id,
                     user.login,
                     user.fullName,
                     user.email,
                     user.role,
-                    tokens
+                    tokens,
+                    InfoResponse(
+                        status = State.SUCCESS,
+                        message = "Авторизация прошла успешно!",
+                    )
                 )
             } else {
                 GeneralResponse.unauthorized("Неверный логин или пароль!")

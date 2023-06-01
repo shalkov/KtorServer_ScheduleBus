@@ -1,4 +1,4 @@
-package ru.shalkoff.bus_schedule.plugins
+package ru.shalkoff.bus_schedule.plugins.route
 
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -19,16 +19,16 @@ import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_PARAM
 import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_VALIDITY_ML
 import ru.shalkoff.bus_schedule.Consts.REGISTER_ENDPOINT
 import ru.shalkoff.bus_schedule.Consts.USER_ID
-import ru.shalkoff.bus_schedule.auth.request.AuthRequest
-import ru.shalkoff.bus_schedule.auth.request.RefreshTokenRequest
-import ru.shalkoff.bus_schedule.auth.request.RegisterRequest
-import ru.shalkoff.bus_schedule.auth.response.LoginResponse
+import ru.shalkoff.bus_schedule.network.request.AuthRequest
+import ru.shalkoff.bus_schedule.network.request.RefreshTokenRequest
+import ru.shalkoff.bus_schedule.network.request.RegisterRequest
+import ru.shalkoff.bus_schedule.network.response.LoginResponse
 import ru.shalkoff.bus_schedule.auth.withRoles
 import ru.shalkoff.bus_schedule.base.BaseResponse
 import ru.shalkoff.bus_schedule.base.generateHttpResponse
-import ru.shalkoff.bus_schedule.controllers.RefreshTokenController
-import ru.shalkoff.bus_schedule.controllers.SignInController
-import ru.shalkoff.bus_schedule.controllers.SignUpController
+import ru.shalkoff.bus_schedule.controllers.auth.RefreshTokenController
+import ru.shalkoff.bus_schedule.controllers.auth.SignInController
+import ru.shalkoff.bus_schedule.controllers.auth.SignUpController
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
 import ru.shalkoff.bus_schedule.db.models.UserRole
 

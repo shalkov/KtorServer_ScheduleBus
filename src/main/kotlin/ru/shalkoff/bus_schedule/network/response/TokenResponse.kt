@@ -1,14 +1,13 @@
-package ru.shalkoff.bus_schedule.auth.response
+package ru.shalkoff.bus_schedule.network.response
 
 import ru.shalkoff.bus_schedule.base.BaseResponse
-import ru.shalkoff.bus_schedule.base.State
+import ru.shalkoff.bus_schedule.base.InfoResponse
 
 /**
  * Модель с токенами, которая отдаётся пользователю
  */
 data class TokenResponse(
-    override val status: State,
-    override val message: String,
     val accessToken: String,
-    val refreshToken: String
+    val refreshToken: String,
+    override val info: InfoResponse
 ) : BaseResponse

@@ -7,6 +7,9 @@ import org.koin.ktor.ext.inject
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.db.DbFactory
 import ru.shalkoff.bus_schedule.plugins.*
+import ru.shalkoff.bus_schedule.plugins.route.configureRouting
+import ru.shalkoff.bus_schedule.plugins.route.configureRoutingAdmin
+import ru.shalkoff.bus_schedule.plugins.route.configureRoutingSchedule
 
 fun main() {
     embeddedServer(
@@ -28,4 +31,5 @@ fun Application.module() {
     configureFreemarker()
     configureRouting()
     configureRoutingAdmin()
+    configureRoutingSchedule()
 }

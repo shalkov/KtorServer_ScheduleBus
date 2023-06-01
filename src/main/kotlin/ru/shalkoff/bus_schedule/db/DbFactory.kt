@@ -1,7 +1,5 @@
 package ru.shalkoff.bus_schedule.db
 
-import ru.shalkoff.bus_schedule.db.tables.TokensTable
-import ru.shalkoff.bus_schedule.db.tables.UsersTable
 import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -10,6 +8,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.shalkoff.bus_schedule.db.tables.*
 import java.util.*
 
 object DbFactory {
@@ -18,7 +17,16 @@ object DbFactory {
         val pool = hikari()
         val db = Database.connect(pool)
 
-        val tables = arrayOf(UsersTable, TokensTable)
+        val tables = arrayOf(
+            UsersTable,
+            TokensTable,
+            Routes,
+            RouteNumbers,
+            TimesStart,
+            TimesEnd,
+            DeparturesStart,
+            DeparturesEnd
+        )
         transaction(db) {
             //SchemaUtils.drop(*tables)
             SchemaUtils.createMissingTablesAndColumns(*tables)

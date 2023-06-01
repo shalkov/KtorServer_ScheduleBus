@@ -1,21 +1,17 @@
-package ru.shalkoff.bus_schedule.controllers
+package ru.shalkoff.bus_schedule.controllers.auth
 
 import ru.shalkoff.bus_schedule.auth.JWTHelper
-import ru.shalkoff.bus_schedule.auth.request.RefreshTokenRequest
-import ru.shalkoff.bus_schedule.auth.response.TokenResponse
+import ru.shalkoff.bus_schedule.network.request.RefreshTokenRequest
+import ru.shalkoff.bus_schedule.network.response.TokenResponse
 import ru.shalkoff.bus_schedule.base.BaseResponse
 import ru.shalkoff.bus_schedule.base.GeneralResponse
 import ru.shalkoff.bus_schedule.base.State
 import ru.shalkoff.bus_schedule.db.dao.tokens.TokensDao
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
-import io.ktor.http.*
-import io.ktor.http.cio.*
-import io.ktor.server.application.*
 import io.ktor.server.plugins.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ru.shalkoff.bus_schedule.base.InfoResponse
 
 /**
  * Контроллер с логикой рефреш-токена
@@ -55,10 +51,12 @@ class RefreshTokenController : BaseAuthController(), KoinComponent {
             addRefreshTokenToStore(user.id, tokens.refreshToken, tokensDao)
 
             TokenResponse(
-                State.SUCCESS,
-                "Токены обновлены успешно",
                 tokens.accessToken,
-                tokens.refreshToken
+                tokens.refreshToken,
+                InfoResponse(
+                    State.SUCCESS,
+                    "Токены обновлены успешно",
+                )
             )
 
         } catch (e: Exception) {

@@ -1,4 +1,4 @@
-package ru.shalkoff.bus_schedule.plugins
+package ru.shalkoff.bus_schedule.plugins.route
 
 import ru.shalkoff.bus_schedule.Consts
 import ru.shalkoff.bus_schedule.Consts.ADMIN_ENDPOINT

@@ -1,23 +1,19 @@
-package ru.shalkoff.bus_schedule.controllers
+package ru.shalkoff.bus_schedule.controllers.auth
 
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.auth.PasswordEncryptor
-import ru.shalkoff.bus_schedule.auth.request.RegisterRequest
-import ru.shalkoff.bus_schedule.auth.response.LoginResponse
+import ru.shalkoff.bus_schedule.network.request.RegisterRequest
+import ru.shalkoff.bus_schedule.network.response.LoginResponse
 import ru.shalkoff.bus_schedule.base.BaseResponse
 import ru.shalkoff.bus_schedule.base.GeneralResponse
 import ru.shalkoff.bus_schedule.base.State
 import ru.shalkoff.bus_schedule.db.dao.tokens.TokensDao
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
 import ru.shalkoff.bus_schedule.db.models.UserRole
-import io.ktor.http.*
-import io.ktor.http.cio.*
-import io.ktor.server.application.*
 import io.ktor.server.plugins.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ru.shalkoff.bus_schedule.base.InfoResponse
 
 /**
  * Контроллер регистрации
@@ -51,14 +47,16 @@ class SignUpController : BaseAuthController(), KoinComponent {
             addRefreshTokenToStore(newUser.id, tokens.refreshToken, tokensDao)
 
             LoginResponse(
-                State.SUCCESS,
-                "Регистрация прошла успешно",
                 newUser.id,
                 newUser.login,
                 newUser.fullName,
                 newUser.email,
                 newUser.role,
-                tokens
+                tokens,
+                InfoResponse(
+                    State.SUCCESS,
+                    "Регистрация прошла успешно"
+                )
             )
         } catch (e: Exception) {
             GeneralResponse.failed(e.message)

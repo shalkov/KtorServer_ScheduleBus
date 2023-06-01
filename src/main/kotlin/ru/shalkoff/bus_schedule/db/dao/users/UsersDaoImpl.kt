@@ -1,7 +1,7 @@
 package ru.shalkoff.bus_schedule.db.dao.users
 
 import ru.shalkoff.bus_schedule.db.DbFactory.dbQuery
-import ru.shalkoff.bus_schedule.db.models.User
+import ru.shalkoff.bus_schedule.db.models.UserModel
 import ru.shalkoff.bus_schedule.db.models.UserRole
 import ru.shalkoff.bus_schedule.db.tables.UsersTable
 import org.jetbrains.exposed.sql.*
@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UsersDaoImpl : UsersDao {
 
-    override suspend fun getAllUsers(): List<User> {
+    override suspend fun getAllUsers(): List<UserModel> {
         return dbQuery {
             UsersTable.selectAll().map {
                 resultRowToUser(it)
@@ -17,7 +17,7 @@ class UsersDaoImpl : UsersDao {
         }
     }
 
-    override suspend fun getUserById(id: Int): User? {
+    override suspend fun getUserById(id: Int): UserModel? {
         return dbQuery {
             UsersTable
                 .select { UsersTable.id eq id }
@@ -34,7 +34,7 @@ class UsersDaoImpl : UsersDao {
         fullName: String,
         email: String,
         role: UserRole
-    ): User? {
+    ): UserModel? {
         return dbQuery {
             val insertStatement = UsersTable.insert {
                 it[UsersTable.login] = login
@@ -77,7 +77,7 @@ class UsersDaoImpl : UsersDao {
         }
     }
 
-    override suspend fun getUserByLogin(login: String): User? {
+    override suspend fun getUserByLogin(login: String): UserModel? {
         return dbQuery {
             UsersTable.select { UsersTable.login eq login }.map {
                 resultRowToUser(it)
@@ -85,7 +85,7 @@ class UsersDaoImpl : UsersDao {
         }
     }
 
-    private fun resultRowToUser(row: ResultRow) = User(
+    private fun resultRowToUser(row: ResultRow) = UserModel(
         id = row[UsersTable.id],
         login = row[UsersTable.login],
         password = row[UsersTable.password],

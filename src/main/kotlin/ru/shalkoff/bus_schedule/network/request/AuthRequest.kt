@@ -1,4 +1,4 @@
-package ru.shalkoff.bus_schedule.auth.request
+package ru.shalkoff.bus_schedule.network.request
 
 data class AuthRequest(
     val login: String,

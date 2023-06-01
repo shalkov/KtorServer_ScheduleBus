@@ -1,4 +1,4 @@
-package ru.shalkoff.bus_schedule.controllers
+package ru.shalkoff.bus_schedule.controllers.auth
 
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.db.dao.tokens.TokensDao

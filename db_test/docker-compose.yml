@@ -6,7 +6,9 @@ services:
       - postgres.env
     ports:
       - "5432:5432"
-    volumes:
-      - pg-volume:/var/lib/postgresql/data/
+# По умолчанию донные в БД, после перезапуска не сохраняются.
+# расскоментируйте код ниже, чтобы они сохранлись.
+#    volumes:
+#      - pg-volume:/var/lib/postgresql/data/
 volumes:
   pg-volume: {}

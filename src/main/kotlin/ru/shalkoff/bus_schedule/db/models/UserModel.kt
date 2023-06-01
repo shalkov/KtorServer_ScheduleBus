@@ -1,6 +1,6 @@
 package ru.shalkoff.bus_schedule.db.models
 
-data class User(
+data class UserModel(
     val id: Int,
     val login: String,
     val password: String,

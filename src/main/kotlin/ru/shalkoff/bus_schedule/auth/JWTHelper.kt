@@ -8,8 +8,7 @@ import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_VALIDITY_ML
 import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_PARAM
 import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_VALIDITY_ML
 import ru.shalkoff.bus_schedule.Consts.USER_ID
-import ru.shalkoff.bus_schedule.auth.response.TokenResponse
-import ru.shalkoff.bus_schedule.db.models.User
+import ru.shalkoff.bus_schedule.db.models.UserModel
 import java.util.*
 
 class JWTHelperImpl : JWTHelper {
@@ -38,7 +37,7 @@ class JWTHelperImpl : JWTHelper {
     /**
      * Создаёт пару токенов для выбранного пользователя
      */
-    override fun createTokens(user: User) = TokensModel(
+    override fun createTokens(user: UserModel) = TokensModel(
         createAccessToken(user, createTokenExpirationDate(validityAccessInMs)),
         createRefreshToken(user, createTokenExpirationDate(refreshValidityInMs))
     )
@@ -51,7 +50,7 @@ class JWTHelperImpl : JWTHelper {
         return verifyTokenType(token) == "refreshToken"
     }
 
-    private fun createAccessToken(user: User, expiration: Date) = JWT.create()
+    private fun createAccessToken(user: UserModel, expiration: Date) = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim(USER_ID, user.id)
@@ -60,7 +59,7 @@ class JWTHelperImpl : JWTHelper {
         .withExpiresAt(expiration)
         .sign(algorithm)
 
-    private fun createRefreshToken(user: User, expiration: Date) = JWT.create()
+    private fun createRefreshToken(user: UserModel, expiration: Date) = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim(USER_ID, user.id)
@@ -77,7 +76,7 @@ class JWTHelperImpl : JWTHelper {
 
 interface JWTHelper {
     val verifier: JWTVerifier
-    fun createTokens(user: User): TokensModel
+    fun createTokens(user: UserModel): TokensModel
     fun verifyTokenType(token: String): String
 
     fun isRefreshToken(token: String): Boolean

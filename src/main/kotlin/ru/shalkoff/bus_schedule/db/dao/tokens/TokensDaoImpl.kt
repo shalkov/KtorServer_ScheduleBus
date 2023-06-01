@@ -1,7 +1,7 @@
 package ru.shalkoff.bus_schedule.db.dao.tokens
 
 import ru.shalkoff.bus_schedule.db.DbFactory
-import ru.shalkoff.bus_schedule.db.models.Token
+import ru.shalkoff.bus_schedule.db.models.TokenModel
 import ru.shalkoff.bus_schedule.db.tables.TokensTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 
 class TokensDaoImpl : TokensDao {
 
-    override suspend fun addToken(userId: Int, refreshToken: String, expirationTime: String): Token? {
+    override suspend fun addToken(userId: Int, refreshToken: String, expirationTime: String): TokenModel? {
         return DbFactory.dbQuery {
             val insertStatement = TokensTable.insert {
                 it[TokensTable.userId] = userId
@@ -34,7 +34,7 @@ class TokensDaoImpl : TokensDao {
         }
     }
 
-    override suspend fun getAllById(userId: Int): List<Token> {
+    override suspend fun getAllById(userId: Int): List<TokenModel> {
         return DbFactory.dbQuery {
             TokensTable.select { (TokensTable.userId eq userId) }.map {
                 resultRowToToken(it)
@@ -70,7 +70,7 @@ class TokensDaoImpl : TokensDao {
         }
     }
 
-    private fun resultRowToToken(row: ResultRow) = Token(
+    private fun resultRowToToken(row: ResultRow) = TokenModel(
         userId = row[TokensTable.userId],
         refreshToken = row[TokensTable.refreshToken],
         expirationTime = row[TokensTable.expirationTime],
