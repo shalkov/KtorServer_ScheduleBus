@@ -6,8 +6,13 @@ import ru.shalkoff.bus_schedule.db.models.UserRole
 import ru.shalkoff.bus_schedule.db.tables.UsersTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import ru.shalkoff.bus_schedule.auth.PasswordEncryptor
 
-class UsersDaoImpl : UsersDao {
+class UsersDaoImpl : UsersDao, KoinComponent {
+
+    private val passwordEncryptor by inject<PasswordEncryptor>()
 
     override suspend fun getAllUsers(): List<UserModel> {
         return dbQuery {
@@ -83,6 +88,21 @@ class UsersDaoImpl : UsersDao {
                 resultRowToUser(it)
             }.singleOrNull()
         }
+    }
+
+    override suspend fun createDefaultSuperUser() {
+        val superUserLogin = "admin"
+        val adminUser = getUserByLogin(superUserLogin)
+        if (adminUser != null) {
+            deleteUser(adminUser.id)
+        }
+        addNewUser(
+            superUserLogin,
+            passwordEncryptor.encryptPassword("User_Admin_!!!"),
+            "Admin Admin",
+            "admin@admin.ru",
+            UserRole.ADMIN
+        )
     }
 
     private fun resultRowToUser(row: ResultRow) = UserModel(

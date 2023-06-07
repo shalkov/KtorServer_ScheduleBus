@@ -3,6 +3,7 @@ package ru.shalkoff.bus_schedule.db
 import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -17,9 +18,11 @@ object DbFactory {
         val pool = hikari()
         val db = Database.connect(pool)
 
-        val tables = arrayOf(
+        val authTables = arrayOf(
             UsersTable,
             TokensTable,
+        )
+        val scheduleTables = arrayOf(
             Routes,
             RouteNumbers,
             TimesStart,
@@ -27,9 +30,13 @@ object DbFactory {
             DeparturesStart,
             DeparturesEnd
         )
+        val tables = authTables + scheduleTables
         transaction(db) {
-            //SchemaUtils.drop(*tables)
+            // удаляем таблици после каждого запуска сервера.
+            SchemaUtils.drop(*tables)
+            // таблицы заполняются в Application.
             SchemaUtils.createMissingTablesAndColumns(*tables)
+
         }
     }
 

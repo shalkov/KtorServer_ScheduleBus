@@ -1,5 +1,7 @@
 package ru.shalkoff.bus_schedule.controllers.auth
 
+import io.ktor.server.application.*
+import io.ktor.server.request.*
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.auth.PasswordEncryptor
 import ru.shalkoff.bus_schedule.network.request.AuthRequest
@@ -23,14 +25,17 @@ class SignInController : BaseAuthController(), KoinComponent {
     private val jwtHelper by inject<JWTHelper>()
     private val passwordEncryptor by inject<PasswordEncryptor>()
 
-    suspend fun signIn(authRequest: AuthRequest): BaseResponse {
+    suspend fun signIn(call: ApplicationCall): BaseResponse {
         return try {
+            val authRequest = call.receive<AuthRequest>()
+
             val user = userDao.getUserByLogin(authRequest.login)
 
             if (user != null && passwordEncryptor.validatePassword(authRequest.password, user.password)) {
                 val tokens = jwtHelper.createTokens(user)
                 addRefreshTokenToStore(user.id, tokens.refreshToken, tokensDao)
 
+                saveTokensToCookie(tokens, call)
                 LoginResponse(
                     user.id,
                     user.login,

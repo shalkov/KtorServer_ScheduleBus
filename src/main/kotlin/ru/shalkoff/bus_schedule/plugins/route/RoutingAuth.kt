@@ -10,6 +10,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import org.koin.ktor.ext.inject
+import ru.shalkoff.bus_schedule.Consts
 import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_PARAM
 import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_VALIDITY_ML
 import ru.shalkoff.bus_schedule.Consts.AUTH_ENDPOINT
@@ -45,26 +46,6 @@ fun Application.configureRouting() {
         }
     }
 
-    fun saveTokensToCookie(
-        authResponse: BaseResponse,
-        call: ApplicationCall
-    ) {
-        if (authResponse is LoginResponse) {
-            call.response.cookies.append(
-                ACCESS_TOKEN_PARAM,
-                authResponse.tokens.accessToken,
-                maxAge = ACCESS_TOKEN_VALIDITY_ML,
-                httpOnly = true
-            )
-            call.response.cookies.append(
-                REFRESH_TOKEN_PARAM,
-                authResponse.tokens.refreshToken,
-                maxAge = REFRESH_TOKEN_VALIDITY_ML,
-                httpOnly = true
-            )
-        }
-    }
-
     routing {
         get(INDEX_ENDPOINT) {
             call.respondText("Первый бекенд!")
@@ -72,19 +53,15 @@ fun Application.configureRouting() {
         }
 
         post(AUTH_ENDPOINT) {
-            val authRequest = call.receive<AuthRequest>()
-            val authResponse = signInController.signIn(authRequest)
+            val authResponse = signInController.signIn(call)
             val response = generateHttpResponse(authResponse)
-            saveTokensToCookie(authResponse, call)
 
             call.respond(response.code, response.body)
         }
 
         post(REGISTER_ENDPOINT) {
-            val registerRequest = call.receive<RegisterRequest>()
-            val registerResponse = signUpController.signUp(registerRequest)
+            val registerResponse = signUpController.signUp(call)
             val response = generateHttpResponse(registerResponse)
-            saveTokensToCookie(registerResponse, call)
 
             call.respond(response.code, response.body)
         }
@@ -102,7 +79,7 @@ fun Application.configureRouting() {
                 get("/admin000") {
                     val principal = call.principal<JWTPrincipal>()
                     val userId = principal?.payload?.getClaim(USER_ID)?.asInt()
-                    val roles = principal?.payload?.getClaim("roles")?.asList(UserRole::class.java)?.toSet()
+                    val roles = principal?.payload?.getClaim("role")?.asList(UserRole::class.java)?.toSet()
                     val expiresAt = principal?.expiresAt?.time?.minus(System.currentTimeMillis())
 
                     val user = userDao.getUserById(userId ?: 0)

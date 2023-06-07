@@ -28,4 +28,6 @@ interface UsersDao {
     suspend fun deleteUser(id: Int): Boolean
 
     suspend fun getUserByLogin(login: String): UserModel?
+
+    suspend fun createDefaultSuperUser()
 }

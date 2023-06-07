@@ -1,9 +1,12 @@
 package ru.shalkoff.bus_schedule.controllers.auth
 
+import io.ktor.server.application.*
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.db.dao.tokens.TokensDao
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ru.shalkoff.bus_schedule.Consts
+import ru.shalkoff.bus_schedule.auth.TokensModel
 import java.text.SimpleDateFormat
 
 abstract class BaseAuthController : KoinComponent {
@@ -28,6 +31,24 @@ abstract class BaseAuthController : KoinComponent {
             userId = userId,
             refreshToken = refreshToken,
             expirationTime = refreshFormatExpirationTime
+        )
+    }
+
+    fun saveTokensToCookie(
+        tokens: TokensModel,
+        call: ApplicationCall
+    ) {
+        call.response.cookies.append(
+            Consts.ACCESS_TOKEN_PARAM,
+            tokens.accessToken,
+            maxAge = Consts.ACCESS_TOKEN_VALIDITY_ML / 1000, // миллисекунды в секунды переводим
+            httpOnly = true
+        )
+        call.response.cookies.append(
+            Consts.REFRESH_TOKEN_PARAM,
+            tokens.refreshToken,
+            maxAge = Consts.REFRESH_TOKEN_VALIDITY_ML / 1000, // миллисекунды в секунды переводим
+            httpOnly = true
         )
     }
 }

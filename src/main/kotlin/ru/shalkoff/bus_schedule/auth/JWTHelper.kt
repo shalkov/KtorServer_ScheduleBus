@@ -5,8 +5,11 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_PARAM
 import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_VALIDITY_ML
+import ru.shalkoff.bus_schedule.Consts.EMPTY_STRING
 import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_PARAM
 import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_VALIDITY_ML
+import ru.shalkoff.bus_schedule.Consts.ROLE_TOKEN
+import ru.shalkoff.bus_schedule.Consts.TOKEN_TYPE
 import ru.shalkoff.bus_schedule.Consts.USER_ID
 import ru.shalkoff.bus_schedule.db.models.UserModel
 import java.util.*
@@ -43,19 +46,19 @@ class JWTHelperImpl : JWTHelper {
     )
 
     override fun verifyTokenType(token: String): String {
-        return verifier.verify(token).claims["tokenType"]!!.asString()
+        return verifier.verify(token).claims[TOKEN_TYPE]?.asString() ?: EMPTY_STRING
     }
 
     override fun isRefreshToken(token: String): Boolean {
-        return verifyTokenType(token) == "refreshToken"
+        return verifyTokenType(token) == REFRESH_TOKEN_PARAM
     }
 
     private fun createAccessToken(user: UserModel, expiration: Date) = JWT.create()
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim(USER_ID, user.id)
-        .withClaim("tokenType", ACCESS_TOKEN_PARAM)
-        .withClaim("role", user.role.roleStr)
+        .withClaim(TOKEN_TYPE, ACCESS_TOKEN_PARAM)
+        .withClaim(ROLE_TOKEN, user.role.roleStr)
         .withExpiresAt(expiration)
         .sign(algorithm)
 
@@ -63,8 +66,8 @@ class JWTHelperImpl : JWTHelper {
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withClaim(USER_ID, user.id)
-        .withClaim("tokenType", REFRESH_TOKEN_PARAM)
-        .withClaim("role", user.role.roleStr)
+        .withClaim(TOKEN_TYPE, REFRESH_TOKEN_PARAM)
+        .withClaim(ROLE_TOKEN, user.role.roleStr)
         .withExpiresAt(expiration)
         .sign(algorithm)
 

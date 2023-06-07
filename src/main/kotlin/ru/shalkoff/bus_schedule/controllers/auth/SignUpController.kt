@@ -1,5 +1,6 @@
 package ru.shalkoff.bus_schedule.controllers.auth
 
+import io.ktor.server.application.*
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.auth.PasswordEncryptor
 import ru.shalkoff.bus_schedule.network.request.RegisterRequest
@@ -11,6 +12,7 @@ import ru.shalkoff.bus_schedule.db.dao.tokens.TokensDao
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
 import ru.shalkoff.bus_schedule.db.models.UserRole
 import io.ktor.server.plugins.*
+import io.ktor.server.request.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.shalkoff.bus_schedule.base.InfoResponse
@@ -25,12 +27,11 @@ class SignUpController : BaseAuthController(), KoinComponent {
     private val jwtHelper by inject<JWTHelper>()
     private val passwordEncryptor by inject<PasswordEncryptor>()
 
-    suspend fun signUp(registerRequest: RegisterRequest): BaseResponse {
+    suspend fun signUp(call: ApplicationCall): BaseResponse {
         return try {
+            val registerRequest = call.receive<RegisterRequest>()
 
             // todo добавить проверок на валидность данных
-            // todo добавить проверку, чтобы нельзя было регистрировать один и тот же логин
-
             val user = userDao.getUserByLogin(registerRequest.login)
             if (user != null) {
                 throw BadRequestException("Пользователь с таким логином уже существует")
@@ -46,6 +47,7 @@ class SignUpController : BaseAuthController(), KoinComponent {
             val tokens = jwtHelper.createTokens(newUser)
             addRefreshTokenToStore(newUser.id, tokens.refreshToken, tokensDao)
 
+            saveTokensToCookie(tokens, call)
             LoginResponse(
                 newUser.id,
                 newUser.login,

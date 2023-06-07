@@ -3,12 +3,18 @@ package ru.shalkoff.bus_schedule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.runBlocking
 import org.koin.ktor.ext.inject
 import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.db.DbFactory
+import ru.shalkoff.bus_schedule.db.dao.schedule.ScheduleDao
+import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
 import ru.shalkoff.bus_schedule.plugins.*
+import ru.shalkoff.bus_schedule.plugins.route.admin.configureRoutingAdmin
 import ru.shalkoff.bus_schedule.plugins.route.configureRouting
-import ru.shalkoff.bus_schedule.plugins.route.configureRoutingAdmin
+import ru.shalkoff.bus_schedule.plugins.route.admin.configureRoutingAdminSchedule
+import ru.shalkoff.bus_schedule.plugins.route.admin.configureRoutingAdminUser
+import ru.shalkoff.bus_schedule.plugins.route.configureRoutingProfile
 import ru.shalkoff.bus_schedule.plugins.route.configureRoutingSchedule
 
 fun main() {
@@ -21,15 +27,32 @@ fun main() {
 }
 
 fun Application.module() {
-    val jwtHelper by inject<JWTHelper>()
+    val scheduleDao by inject<ScheduleDao>()
+    val userDao by inject<UsersDao>()
 
     DbFactory.init()
     configureSerialization()
     configureKoin()
     configureSwaggerUI()
-    configureSecurity(jwtHelper)
+    configureSecurity()
     configureFreemarker()
+
+    // api запросы
     configureRouting()
-    configureRoutingAdmin()
     configureRoutingSchedule()
+    configureRoutingProfile()
+
+    //маршруты для админки
+    configureRoutingAdmin()
+    configureRoutingAdminUser()
+    configureRoutingAdminSchedule()
+
+    environment.monitor.subscribe(ApplicationStarted) { application ->
+        application.environment.log.info("Сервер запущен!")
+        runBlocking {
+            // после старта сервера, заполняем таблицы данными
+            scheduleDao.setupDefaultSchedule()
+            userDao.createDefaultSuperUser()
+        }
+    }
 }
