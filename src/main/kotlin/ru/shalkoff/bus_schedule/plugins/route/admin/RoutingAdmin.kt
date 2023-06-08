@@ -17,7 +17,14 @@ fun Application.configureRoutingAdmin() {
         get(Consts.ADMIN_ENDPOINT) {
             try {
                 adminController.checkUserAccessAdminPanel(call)
-                call.respond(FreeMarkerContent(Consts.INDEX_FTL, null))
+                call.respond(
+                    FreeMarkerContent(
+                        Consts.INDEX_FTL, null
+//                        mapOf(
+//                            "error_alert" to adminController.alertError
+//                        )
+                    )
+                )
             } catch (e: Exception) {
                 call.respond(
                     HttpStatusCode.Unauthorized,

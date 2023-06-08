@@ -21,9 +21,12 @@ object Consts {
     const val USER_FTL = "user.ftl"
     const val LOGIN_FTL = "login.ftl"
     const val SCHEDULE_FTL = "schedule.ftl"
+    const val SCHEDULE_NEW_EDIT_FTL = "schedule_new_edit.ftl"
+    const val DEPARTURE_FTL = "departure.ftl"
 
     const val INDEX_ENDPOINT = "/"
     const val ADMIN_ENDPOINT = "/admin"
+    const val ADMIN_SCHEDULE_ENDPOINT = "/admin/schedule"
     const val AUTH_ENDPOINT = "/auth"
     const val REGISTER_ENDPOINT = "/register"
     const val REFRESH_ENDPOINT = "/refresh"

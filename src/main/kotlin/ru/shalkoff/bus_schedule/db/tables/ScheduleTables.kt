@@ -17,7 +17,7 @@ object RouteNumbers : IntIdTable() {
  */
 object Routes : IntIdTable() {
 
-    val number = reference("number", RouteNumbers.number)
+    val number = reference("number", RouteNumbers.number).uniqueIndex()
     val title = text("route_title") // Графское - Воронеж (310)
     val description = text("route_description") // Длинное описание маршрута
     val departureTitleStart = reference("departure_start", DeparturesStart.title)

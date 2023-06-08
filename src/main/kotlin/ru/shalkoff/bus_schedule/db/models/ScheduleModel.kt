@@ -14,11 +14,13 @@ data class ScheduleModel(
  * @param timeList - список объектов с информацией о времени отправления.
  */
 data class DepartureInfo(
+    val id: Int,
     val departureFrom: String, // Воронеж
     val timeList: List<ScheduleTime>
 )
 
 data class ScheduleTime(
+    val id: Int,
     val time: String, // 6:50
     val description: String? = null // отправление из Парижской Коммуны
 )

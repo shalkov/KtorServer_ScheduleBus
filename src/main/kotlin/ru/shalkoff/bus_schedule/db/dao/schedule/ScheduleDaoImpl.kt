@@ -25,31 +25,141 @@ class ScheduleDaoImpl : ScheduleDao {
 
     override suspend fun getByRouteNumber(routeNumber: String): ScheduleModel? {
         return DbFactory.dbQuery {
-            var scheduleModel: ScheduleModel? = null
-
             val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
-            if (route != null) {
-                val startTimes = EntityTimeStart.find { TimesStart.routeId eq route.id.value }.toList()
-                val endTimes = EntityTimeEnd.find { TimesEnd.routeId eq route.id.value }.toList()
-                scheduleModel = ScheduleModel(
-                    route.id.value,
-                    route.routeNumber.number,
-                    route.title,
-                    route.description,
-                    DepartureInfo(
-                        route.departureTitleStart.title,
-                        startTimes.map { ScheduleTime(it.time, it.description) }
-                    ),
-                    DepartureInfo(
-                        route.departureTitleEnd.title,
-                        endTimes.map { ScheduleTime(it.time, it.description) }
-                    )
-                )
-            }
-            scheduleModel
+            createScheduleModel(route)
         }
     }
 
+    override suspend fun getByRouteId(routeId: Int): ScheduleModel? {
+        return DbFactory.dbQuery {
+            val route = EntityRoute.find { Routes.id eq routeId }.firstOrNull()
+            createScheduleModel(route)
+        }
+    }
+
+    override suspend fun getAllDepartureStart(): List<String> {
+        return DbFactory.dbQuery {
+            EntityDepartureStart.all().map { it.title }
+        }
+    }
+
+    override suspend fun getAllDepartureEnd(): List<String> {
+        return DbFactory.dbQuery {
+            EntityDepartureEnd.all().map { it.title }
+        }
+    }
+
+    override suspend fun addRoute(
+        routeNumber: String,
+        name: String,
+        description: String,
+        departureStart: String,
+        departureEnd: String
+    ): Boolean {
+        return DbFactory.dbQuery {
+            val routeNumberEntity = createOrGetEntityRouteNumber(routeNumber)
+            val departure = getDeparture(departureStart, departureEnd)
+
+            EntityRoute.new {
+                this.routeNumber = routeNumberEntity
+                this.title = name
+                this.description = description
+                this.departureTitleStart = departure.first
+                this.departureTitleEnd = departure.second
+            }
+            true
+        }
+    }
+
+    override suspend fun editRoute(
+        id: Int,
+        routeNumber: String,
+        name: String,
+        description: String,
+        departureStart: String,
+        departureEnd: String
+    ): Boolean {
+        return DbFactory.dbQuery {
+            val routeNumberEntity = if (EntityRoute[id].routeNumber.number == routeNumber) {
+                // значит при изменении, не поменяли номер маршрта
+                EntityRoute[id].routeNumber
+            } else {
+                createOrGetEntityRouteNumber(routeNumber)
+            }
+            val departure = getDeparture(departureStart, departureEnd)
+
+            EntityRoute[id].apply {
+                this.routeNumber = routeNumberEntity
+                this.title = name
+                this.description = description
+                this.departureTitleStart = departure.first
+                this.departureTitleEnd = departure.second
+            }
+            true
+        }
+    }
+
+    private suspend fun createOrGetEntityRouteNumber(routeNumber: String): EntityRouteNumber {
+        return DbFactory.dbQuery {
+            // Надо сначала проверить, не занят ли уже этот номер маршрута дргими
+            val routeHasNumber = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
+            if (routeHasNumber != null) {
+                throw Exception("Этот номер маршрута: $routeNumber уже используется другим расписанием, он должен быть уникальным")
+            } else {
+                // такого номера маршрута в таблице route нет.
+                // теперь надо посмотреть в таблице RouteNumbers, если там есть берём оттуда, если нет, то создаём.
+                EntityRouteNumber.find {
+                    RouteNumbers.number eq routeNumber
+                }.firstOrNull()
+                    ?: EntityRouteNumber.new {
+                        number = routeNumber
+                    }
+            }
+        }
+    }
+
+    private suspend fun getDeparture(
+        departureStart: String,
+        departureEnd: String
+    ): Pair<EntityDepartureStart, EntityDepartureEnd> {
+        return DbFactory.dbQuery {
+            val departureStartEntity = EntityDepartureStart.find {
+                DeparturesStart.title eq departureStart
+            }.firstOrNull()
+                ?: throw Exception("Отправления(из начальной точки) под названием $departureStart не существует, добавьте его сначала")
+            val departureEndEntity = EntityDepartureEnd.find {
+                DeparturesEnd.title eq departureEnd
+            }.firstOrNull()
+                ?: throw Exception("Отправления(из конечной точки) под названием $departureEnd не существует, добавьте его сначала")
+
+            departureStartEntity to departureEndEntity
+        }
+    }
+
+    private fun createScheduleModel(route: EntityRoute?): ScheduleModel? {
+        var scheduleModel: ScheduleModel? = null
+        if (route != null) {
+            val startTimes = EntityTimeStart.find { TimesStart.routeId eq route.id.value }.toList()
+            val endTimes = EntityTimeEnd.find { TimesEnd.routeId eq route.id.value }.toList()
+            scheduleModel = ScheduleModel(
+                route.id.value,
+                route.routeNumber.number,
+                route.title,
+                route.description,
+                DepartureInfo(
+                    route.departureTitleStart.id.value,
+                    route.departureTitleStart.title,
+                    startTimes.map { ScheduleTime(it.id.value, it.time, it.description) }
+                ),
+                DepartureInfo(
+                    route.departureTitleEnd.id.value,
+                    route.departureTitleEnd.title,
+                    endTimes.map { ScheduleTime(it.id.value, it.time, it.description) }
+                )
+            )
+        }
+        return scheduleModel
+    }
 
     /**
      * Заполнить таблицы информацией об расписании автобусов
