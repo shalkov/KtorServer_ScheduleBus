@@ -1,6 +1,8 @@
 package ru.shalkoff.bus_schedule.controllers
 
+import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.freemarker.*
 import io.ktor.server.response.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -14,13 +16,6 @@ class AdminController : KoinComponent {
 
     private val userDao by inject<UsersDao>()
     private val jwtHelper by inject<JWTHelper>()
-
-    var alertError: String = ""
-        get() {
-            val error = field
-            field = ""
-            return error
-        }
 
     fun getAccessTokenFromCookie(call: ApplicationCall): String? {
         return call.request.cookies.rawCookies[Consts.ACCESS_TOKEN_PARAM]
@@ -46,8 +41,29 @@ class AdminController : KoinComponent {
     }
 
     suspend fun handlerError(call: ApplicationCall, e: Exception) {
-        //todo написать логику проверки
-        //alertError = e.message ?: Consts.UNKNOWN_ERROR
+        //todo подумать над более лучшим решением.
+        // тут ошибка, поправить
         call.respondRedirect(Consts.ADMIN_ENDPOINT)
+        //renderIndex(call, e.message)
+    }
+
+    suspend fun renderIndex(
+        call: ApplicationCall,
+        message: String? = null
+    ) {
+        try {
+            checkUserAccessAdminPanel(call)
+            call.respond(
+                FreeMarkerContent(
+                    Consts.INDEX_FTL,
+                    mapOf("error_alert" to message)
+                )
+            )
+        } catch (e: Exception) {
+            call.respond(
+                HttpStatusCode.Unauthorized,
+                FreeMarkerContent(Consts.LOGIN_FTL, mapOf("error" to e.message))
+            )
+        }
     }
 }

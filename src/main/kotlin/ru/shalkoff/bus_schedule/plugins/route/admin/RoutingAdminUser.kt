@@ -36,8 +36,7 @@ fun Application.configureRoutingAdminUser() {
                         FreeMarkerContent(
                             USERS_FTL,
                             mapOf(
-                                "users" to userDao.getAllUsers().sortedBy { it.id },
-                                "error_alert" to adminController.alertError
+                                "users" to userDao.getAllUsers().sortedBy { it.id }
                             )
                         )
                     )

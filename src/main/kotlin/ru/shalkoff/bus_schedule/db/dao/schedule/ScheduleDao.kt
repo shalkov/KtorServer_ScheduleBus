@@ -29,4 +29,37 @@ interface ScheduleDao {
     ): Boolean
 
     suspend fun setupDefaultSchedule()
+    suspend fun addDepartureStart(name: String)
+    suspend fun addDepartureEnd(name: String)
+
+    suspend fun addTimeDepartureStart(
+        routeNumber: String,
+        time: String,
+        description: String
+    ): Boolean
+
+    suspend fun addTimeDepartureEnd(
+        routeNumber: String,
+        time: String,
+        description: String
+    ): Boolean
+
+    suspend fun editTimeDepartureStart(
+        id: Int,
+        routeNumber: String,
+        time: String,
+        description: String
+    ): Boolean
+
+    suspend fun editTimeDepartureEnd(
+        id: Int,
+        routeNumber: String,
+        time: String,
+        description: String
+    ): Boolean
+
+    suspend fun deleteRoute(id: Int): Boolean
+    suspend fun deleteTimeStart(timeId: Int): Boolean
+
+    suspend fun deleteTimeEnd(timeId: Int): Boolean
 }

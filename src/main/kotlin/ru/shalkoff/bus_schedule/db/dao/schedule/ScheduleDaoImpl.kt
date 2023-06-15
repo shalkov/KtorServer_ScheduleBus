@@ -99,6 +99,128 @@ class ScheduleDaoImpl : ScheduleDao {
         }
     }
 
+    override suspend fun addDepartureStart(name: String) {
+        DbFactory.dbQuery {
+            EntityDepartureStart.new {
+                title = name
+            }
+        }
+    }
+
+    override suspend fun addDepartureEnd(name: String) {
+        DbFactory.dbQuery {
+            EntityDepartureEnd.new {
+                title = name
+            }
+        }
+    }
+
+    override suspend fun addTimeDepartureStart(
+        routeNumber:
+        String, time: String,
+        description: String
+    ): Boolean {
+        return DbFactory.dbQuery {
+            val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
+                ?: throw Exception("Не найден маршрут с таким номером")
+            EntityTimeStart.new {
+                this.route = route
+                this.time = time
+                this.description = description
+            }
+            true
+        }
+    }
+
+    override suspend fun addTimeDepartureEnd(
+        routeNumber:
+        String, time: String,
+        description: String
+    ): Boolean {
+        return DbFactory.dbQuery {
+            val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
+                ?: throw Exception("Не найден маршрут с таким номером")
+            EntityTimeEnd.new {
+                this.route = route
+                this.time = time
+                this.description = description
+            }
+            true
+        }
+    }
+
+    override suspend fun editTimeDepartureStart(
+        id: Int,
+        routeNumber: String,
+        time: String,
+        description: String
+    ): Boolean {
+        return DbFactory.dbQuery {
+            val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
+                ?: throw Exception("Не найден маршрут с таким номером")
+            EntityTimeStart[id].apply {
+                this.route = route
+                this.time = time
+                this.description = description
+            }
+            true
+        }
+    }
+
+    override suspend fun editTimeDepartureEnd(
+        id: Int,
+        routeNumber: String,
+        time: String,
+        description: String
+    ): Boolean {
+        return DbFactory.dbQuery {
+            val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
+                ?: throw Exception("Не найден маршрут с таким номером")
+            EntityTimeEnd[id].apply {
+                this.route = route
+                this.time = time
+                this.description = description
+            }
+            true
+        }
+    }
+
+    override suspend fun deleteRoute(id: Int): Boolean {
+        return DbFactory.dbQuery {
+            val route = EntityRoute.find { Routes.id eq id }.firstOrNull()
+                ?: throw Exception("Не найден маршрут с таким ID")
+            // удаляем все времена отправления из начальной точки, привязанные к этому маршруту
+            val timeStartList = EntityTimeStart.find { TimesStart.routeId eq route.id }
+            timeStartList.forEach { it.delete() }
+
+            // удаляем все времена отправления из конечной точки, привязанные к этому маршруту
+            val timeEndList = EntityTimeEnd.find { TimesEnd.routeId eq route.id }
+            timeEndList.forEach { it.delete() }
+
+            //удаляем сам маршрту.
+            route.delete()
+            true
+        }
+    }
+
+    override suspend fun deleteTimeStart(timeId: Int): Boolean {
+        return DbFactory.dbQuery {
+//            val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
+//                ?: throw Exception("Не найден маршрут с таким номером")
+            val entityTime = EntityTimeStart.find { TimesStart.id eq timeId }.firstOrNull() ?: throw Exception("Не найден ID времени")
+            entityTime.delete()
+            true
+        }
+    }
+
+    override suspend fun deleteTimeEnd(timeId: Int): Boolean {
+        return DbFactory.dbQuery {
+            val entityTime = EntityTimeEnd.find { TimesEnd.id eq timeId }.firstOrNull() ?: throw Exception("Не найден ID времени")
+            entityTime.delete()
+            true
+        }
+    }
+
     private suspend fun createOrGetEntityRouteNumber(routeNumber: String): EntityRouteNumber {
         return DbFactory.dbQuery {
             // Надо сначала проверить, не занят ли уже этот номер маршрута дргими

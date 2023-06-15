@@ -35,11 +35,11 @@
         </div>
         <br/>
         <div class="row">
-            <a href="/admin/schedule/departure/new/start" class="btn btn-secondary float-right" role="button">New Departure Start</a>
+            <a href="/admin/schedule/departure/new?nameDeparture=Start" class="btn btn-secondary float-right" role="button">New Departure Start</a>
         </div>
         <br/>
         <div class="row">
-            <a href="/admin/schedule/departure/new/end" class="btn btn-secondary float-right" role="button">New Departure End</a>
+            <a href="/admin/schedule/departure/new?nameDeparture=End" class="btn btn-secondary float-right" role="button">New Departure End</a>
         </div>
     </div>
 </@layout.mainLayout>

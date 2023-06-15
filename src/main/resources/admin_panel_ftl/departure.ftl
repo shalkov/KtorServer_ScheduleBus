@@ -21,8 +21,8 @@
                 <td>${scheduleTime.time}</td>
                 <td>${scheduleTime.description}</td>
                 <td>
-                    <a href="/admin/user?action=edit&id=${scheduleTime.id}" class="btn btn-secondary float-right mr-2" role="button">Edit</a>
-                    <a href="/admin/user/delete?id=${scheduleTime.id}" class="btn btn-danger float-right mr-2" role="button">Delete</a>
+                    <a href="/admin/schedule/departure/time?action=edit&routeNumber=${routeNumber}&departure=${departure}&departureName=${departureName}&timeId=${scheduleTime.id}" class="btn btn-secondary float-right mr-2" role="button">Edit</a>
+                    <a href="/admin/schedule/departure/time/delete?departure=${departure}&timeId=${scheduleTime.id}&routeNumber=${routeNumber}" class="btn btn-danger float-right mr-2" role="button">Delete</a>
                 </td>
             </tr>
             </#list>
@@ -30,7 +30,7 @@
     </table>
     <div class="container">
         <div class="row">
-            <a href="/admin/user?action=new" class="btn btn-secondary float-right" role="button">Add Time</a>
+            <a href="/admin/schedule/departure/time?action=new&routeNumber=${routeNumber}&departure=${departure}&departureName=${departureName}" class="btn btn-secondary float-right" role="button">Add Time</a>
         </div>
     </div>
 </@layout.mainLayout>

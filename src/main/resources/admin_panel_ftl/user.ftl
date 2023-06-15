@@ -1,6 +1,6 @@
 <#import "template.ftl" as layout />
 <@layout.mainLayout title="New Employee">
-    <form action="/admin/user" method="post">
+    <form action="/admin/user" method="post" class="table">
         <div class="form-group">
             <label for="login">Login</label>
             <input type="text" class="form-control" id="login" name="login" placeholder="Enter Name" value="${(user.login)!}">

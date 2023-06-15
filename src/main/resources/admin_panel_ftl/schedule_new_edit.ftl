@@ -1,6 +1,6 @@
 <#import "template.ftl" as layout />
 <@layout.mainLayout title="New Route">
-    <form action="/admin/schedule" method="post">
+    <form action="/admin/schedule" method="post" class="table">
         <div class="form-group">
             <label for="routeNumber">Route Number</label>
             <input type="text" class="form-control" id="routeNumber" name="routeNumber" placeholder="Enter Number" value="${(route.routeNumber)!}">
