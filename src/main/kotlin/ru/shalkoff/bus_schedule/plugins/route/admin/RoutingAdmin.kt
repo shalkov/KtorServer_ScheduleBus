@@ -15,7 +15,21 @@ fun Application.configureRoutingAdmin() {
 
     routing {
         get(Consts.ADMIN_ENDPOINT) {
-            adminController.renderIndex(call)
+            try {
+                adminController.checkUserAccessAdminPanel(call)
+                val errorText = call.request.queryParameters["errorText"]
+                call.respond(
+                    FreeMarkerContent(
+                        Consts.INDEX_FTL,
+                        mapOf("error_alert" to errorText)
+                    )
+                )
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    FreeMarkerContent(Consts.LOGIN_FTL, mapOf("error" to e.message))
+                )
+            }
         }
     }
 }

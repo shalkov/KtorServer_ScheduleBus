@@ -41,29 +41,8 @@ class AdminController : KoinComponent {
     }
 
     suspend fun handlerError(call: ApplicationCall, e: Exception) {
-        //todo подумать над более лучшим решением.
-        // тут ошибка, поправить
-        call.respondRedirect(Consts.ADMIN_ENDPOINT)
-        //renderIndex(call, e.message)
-    }
-
-    suspend fun renderIndex(
-        call: ApplicationCall,
-        message: String? = null
-    ) {
-        try {
-            checkUserAccessAdminPanel(call)
-            call.respond(
-                FreeMarkerContent(
-                    Consts.INDEX_FTL,
-                    mapOf("error_alert" to message)
-                )
-            )
-        } catch (e: Exception) {
-            call.respond(
-                HttpStatusCode.Unauthorized,
-                FreeMarkerContent(Consts.LOGIN_FTL, mapOf("error" to e.message))
-            )
-        }
+        val byteMessage = e.message?.toByteArray() ?: byteArrayOf()
+        val str = String(byteMessage, Charsets.ISO_8859_1)
+        call.respondRedirect(Consts.ADMIN_ENDPOINT+"?errorText=${str}")
     }
 }
