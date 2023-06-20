@@ -1,56 +1,226 @@
 openapi: "3.0.3"
 info:
-  title: "JSON API sample"
-  description: "A JSON API that allows you to view and add customers"
+  title: "Swagger спецификация [Bus Schedule]"
+  description: "Информация о всех запросах этого сервиса"
   version: "1.0.0"
 servers:
   - url: "http://0.0.0.0:8080"
 paths:
-  /customer:
+  /auth:
     post:
-      description: "Creates a new customer"
+      summary: Авторизация пользователя
+      description: "Авторизация"
       requestBody:
-        description: "A JSON object containing customer information"
+        description: "Запрос для авторизации"
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Customer"
-      responses:
-        "201":
-          description: "Created"
-          content:
-            text/plain:
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Customer stored correctly"
-  /customer/{id}:
-    get:
-      description: "Returns a customer by its ID"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            type: "string"
+              $ref: "#/components/schemas/AuthRequest"
       responses:
         "200":
-          description: "OK"
+          description: Авторизация прошла успешно
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: "#/components/schemas/Customer"
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /register:
+    post:
+      summary: Регистрация пользователя
+      description: "Регистрация"
+      requestBody:
+        description: "Запрос для регистрации"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: Регистрация прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Ошибка регистрации
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /refresh:
+    post:
+      summary: Обновление токенов
+      description: При протухании access-токена - посылается данный запрос для обновления пары токенов
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                refreshToken:
+                  $ref: "#/components/schemas/RefreshToken"
+      responses:
+        "200":
+          description: Обновление токенов прошло успешно
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+
+        "400":
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
 components:
   schemas:
-    Customer:
-      type: "object"
+
+    Tokens:
+      type: object
+      properties:
+        accessToken:
+          $ref: "#/components/schemas/AccessToken"
+        refreshToken:
+          $ref: "#/components/schemas/RefreshToken"
+      required:
+        - accessToken
+        - refreshToken
+
+    AccessToken:
+      type: string
+      description: Refresh токен
+      example: "joaksjdo34jlskdjf"
+
+    RefreshToken:
+      type: string
+      description: Access токен
+      example: "joaksjdo34jlskdjf"
+
+    AuthResponse:
+      type: object
       properties:
         id:
-          type: "integer"
-          format: "int32"
-        firstName:
-          type: "string"
-        lastName:
-          type: "string"
+          type: integer
+          description: id пользователя
+          example: 1
+        login:
+          type: string
+          description: Логин пользователя
+          example: "User_1234"
+        fullName:
+          type: string
+          description: ФИО пользователя
+          example: "Иванов Василий Иванович"
+        email:
+          type: string
+          description: Почта пользователя
+          example: "user1234@mail.com"
+        role:
+          $ref: "#/components/schemas/Roles"
+        tokens:
+          $ref: "#/components/schemas/Tokens"
+        info:
+          $ref: "#/components/schemas/InfoSuccess"
+
+    AuthRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+          example: "Test1"
+        password:
+          type: string
+          description: Пароль
+          example: "Test1"
+      required:
+        - login
+        - password
+
+    ServerError:
+      type: object
+      properties:
+        info:
+          $ref: "#/components/schemas/InfoError"
+
+    InfoError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "UNAUTHORIZED"
+        message:
+          type: string
+          description: Сообщение об ошибке
+          example: "Не верный логин или пароль!"
+      required:
+        - status
+        - message
+
+    InfoSuccess:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "SUCCESS"
+        message:
+          type: string
+          description: Сообщение об успехе выполнения запроса
+          example: "Успех!"
+      required:
+        - status
+        - message
+
+    Roles:
+      type: string
+      description: Роль пользователя (права доступа)
+      example: "ADMIN"
+      enum:
+        - USER
+        - MODERATOR
+        - ADMIN
+
+    RegisterRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+          example: "User"
+        password:
+          type: string
+          description: Пароль
+          example: "User_password"
+        fullName:
+          type: string
+          description: ФИО
+          example: "Иванов Василий Иванович"
+        email:
+          type: string
+          description: Почта пользователя
+          example: "user@mail.com"
+      required:
+        - login
+        - password
+        - fullName
+        - email
+
+    RefreshResponse:
+      type: object
+      properties:
+        accessToken:
+          $ref: "#/components/schemas/AccessToken"
+        refreshToken:
+          $ref: "#/components/schemas/RefreshToken"
+        info:
+          $ref: "#/components/schemas/InfoSuccess"

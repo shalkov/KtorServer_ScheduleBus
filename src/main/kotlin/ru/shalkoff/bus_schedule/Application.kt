@@ -3,6 +3,8 @@ package ru.shalkoff.bus_schedule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.koin.ktor.ext.inject
 import ru.shalkoff.bus_schedule.auth.JWTHelper
@@ -38,6 +40,11 @@ fun Application.module() {
     configureFreemarker()
 
     // api запросы
+    routing {
+        get(Consts.INDEX_ENDPOINT) {
+            call.respondRedirect(Consts.SWAGGER_ENDPOINT)
+        }
+    }
     configureRouting()
     configureRoutingSchedule()
     configureRoutingProfile()

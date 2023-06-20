@@ -47,11 +47,6 @@ fun Application.configureRouting() {
     }
 
     routing {
-        get(INDEX_ENDPOINT) {
-            call.respondText("Первый бекенд!")
-            //todo сделать отображение Swagger спецификации
-        }
-
         post(AUTH_ENDPOINT) {
             val authResponse = signInController.signIn(call)
             val response = generateHttpResponse(authResponse)

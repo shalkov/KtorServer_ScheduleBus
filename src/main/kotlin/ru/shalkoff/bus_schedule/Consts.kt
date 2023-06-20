@@ -27,9 +27,9 @@ object Consts {
     const val TIME_NEW_EDIT_FTL = "time_new_edit.ftl"
 
     const val INDEX_ENDPOINT = "/"
+    const val SWAGGER_ENDPOINT = "/swagger"
     const val ADMIN_ENDPOINT = "/admin"
     const val ADMIN_SCHEDULE_ENDPOINT = "/admin/schedule"
-    const val ADMIN_SCHEDULE_DELETE_ENDPOINT = "/admin/schedule/delete"
     const val ADMIN_SCHEDULE_DEPARTURE_ENDPOINT = "/admin/schedule/departure"
     const val AUTH_ENDPOINT = "/auth"
     const val REGISTER_ENDPOINT = "/register"
