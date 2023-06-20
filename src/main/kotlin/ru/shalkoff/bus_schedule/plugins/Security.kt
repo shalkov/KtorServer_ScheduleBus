@@ -2,14 +2,14 @@ package ru.shalkoff.bus_schedule.plugins
 
 import ru.shalkoff.bus_schedule.Consts.USER_ID
 import ru.shalkoff.bus_schedule.auth.JWTHelper
-import io.ktor.http.*
 import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import org.koin.ktor.ext.inject
-import ru.shalkoff.bus_schedule.Consts.EMPTY_STRING
+import ru.shalkoff.bus_schedule.base.GeneralResponse
+import ru.shalkoff.bus_schedule.base.generateHttpResponse
 import ru.shalkoff.bus_schedule.controllers.AdminController
 
 fun Application.configureSecurity() {
@@ -31,12 +31,17 @@ fun Application.configureSecurity() {
                 if (header != null) {
                     header
                 } else {
-                    val accessToken = adminController.getAccessTokenFromCookie(it) ?: EMPTY_STRING
-                    HttpAuthHeader.Single(AuthScheme.Bearer, accessToken)
+                    val accessToken = adminController.getAccessTokenFromCookie(it)
+                    if (accessToken != null && jwtHelper.verifyToken(accessToken) != null) {
+                        HttpAuthHeader.Single(AuthScheme.Bearer, accessToken)
+                    } else {
+                        null
+                    }
                 }
             }
             challenge { defaultScheme, realm ->
-                call.respond(HttpStatusCode.Unauthorized, "Токен не валидный")
+                val response = generateHttpResponse(GeneralResponse.unauthorized("Вы не авторизованы"))
+                call.respond(response.code, response.body)
             }
         }
     }

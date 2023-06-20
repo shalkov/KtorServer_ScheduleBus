@@ -3,13 +3,23 @@ info:
   title: "Swagger спецификация [Bus Schedule]"
   description: "Информация о всех запросах этого сервиса"
   version: "1.0.0"
+  contact:
+    name: Владимир Шальков
+    email: admin@shalkoff.ru
+
 servers:
   - url: "http://0.0.0.0:8080"
+
+security:
+  - AuthApiKey: []
+
 paths:
   /auth:
     post:
       summary: Авторизация пользователя
       description: "Авторизация"
+      tags: [Авторизация]
+      security: []
       requestBody:
         description: "Запрос для авторизации"
         required: true
@@ -35,6 +45,8 @@ paths:
     post:
       summary: Регистрация пользователя
       description: "Регистрация"
+      tags: [Авторизация]
+      security: []
       requestBody:
         description: "Запрос для регистрации"
         required: true
@@ -60,6 +72,8 @@ paths:
     post:
       summary: Обновление токенов
       description: При протухании access-токена - посылается данный запрос для обновления пары токенов
+      tags: [Авторизация]
+      security: []
       requestBody:
         required: true
         content:
@@ -82,6 +96,74 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ServerError"
+
+  /user/profile:
+    get:
+      summary: Получить информацию о профиле
+      tags: [Профиль]
+      responses:
+        "200":
+          description: Информация о профиле получена успешно
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileResponse"
+
+        "400":
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /schedule/all:
+    get:
+      summary: Получить информацию о всех маршрутах
+      tags: [Расписание]
+      security: []
+      responses:
+        "200":
+          description: Запрос возвращает список из всех маршрутов
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScheduleResponse"
+
+        "400":
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /schedule/{routeNumber}:
+    get:
+      summary: Получить информацию по конкретному маршруту
+      tags: [Расписание]
+      security: []
+      parameters:
+        - in: path
+          name: routeNumber
+          schema:
+            type: string
+          required: true
+          description: Номер маршрута (может быть строкой, например 310а)
+      responses:
+        "200":
+          description: Запрос возвращает список из всех маршрутов
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteResponse"
+
+        "400":
+          description: Произошла ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+
 components:
   schemas:
 
@@ -224,3 +306,106 @@ components:
           $ref: "#/components/schemas/RefreshToken"
         info:
           $ref: "#/components/schemas/InfoSuccess"
+
+    ProfileResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id пользователя
+          example: 1
+        login:
+          type: string
+          description: Логин пользователя
+          example: "User_1234"
+        fullName:
+          type: string
+          description: ФИО пользователя
+          example: "Иванов Василий Иванович"
+        email:
+          type: string
+          description: Почта пользователя
+          example: "user1234@mail.com"
+        role:
+          $ref: "#/components/schemas/Roles"
+
+    ScheduleResponse:
+      type: object
+      properties:
+        routes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RouteModel"
+        info:
+          $ref: "#/components/schemas/InfoSuccess"
+
+    RouteModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID маршрута
+          example: 1
+        routeNumber:
+          type: string
+          description: Номер маршрута
+          example: 310
+        name:
+          type: string
+          description: Наименование маршрута
+          example: "Графское - Воронеж"
+        description:
+          type: string
+          description: Описание маршрута
+          example: "Идёт через лес"
+        departureStart:
+          $ref: "#/components/schemas/DepartureModel"
+        departureEnd:
+          $ref: "#/components/schemas/DepartureModel"
+
+    DepartureModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID отправления
+          example: 1
+        departureFrom:
+          type: string
+          description: Наименование места отправления
+          example: Воронеж
+        timeList:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeModel"
+
+    TimeModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID времени
+          example: 1
+        time:
+          type: string
+          description: Время отправления
+          example: "6:50"
+        description:
+          type: string
+          description: Описание для времени отправления
+          example: Отправление от Парижской коммуны
+
+    RouteResponse:
+      type: object
+      properties:
+        route:
+          $ref: "#/components/schemas/RouteModel"
+        info:
+          $ref: "#/components/schemas/InfoSuccess"
+
+  securitySchemes:
+    AuthApiKey:
+      description: Ключ авторизованного пользователя
+      type: apiKey
+      in: header
+      name: Authorization

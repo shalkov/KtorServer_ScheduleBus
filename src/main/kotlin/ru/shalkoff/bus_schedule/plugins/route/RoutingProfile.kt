@@ -8,6 +8,7 @@ import org.koin.ktor.ext.inject
 import ru.shalkoff.bus_schedule.base.GeneralResponse
 import ru.shalkoff.bus_schedule.base.generateHttpResponse
 import ru.shalkoff.bus_schedule.controllers.auth.AuthCheckerController
+import ru.shalkoff.bus_schedule.db.models.UserRole.Companion.mapToResponse
 
 fun Application.configureRoutingProfile() {
 
@@ -16,11 +17,15 @@ fun Application.configureRoutingProfile() {
     routing {
         authenticate {
             get("user/profile") {
-                val user = authCheckerController.getUserByToken(call)
-                if (user != null) {
-                    call.respond(user)
-                } else {
-                    val response = generateHttpResponse(GeneralResponse.unauthorized("Вы не авторизованы"))
+                try {
+                    val user = authCheckerController.getUserByToken(call)
+                    if (user != null) {
+                        call.respond(user.mapToResponse())
+                    } else {
+                        throw Exception("Пользователь с таким токеном не найден")
+                    }
+                } catch (e: Exception) {
+                    val response = generateHttpResponse(GeneralResponse.unauthorized(e.message))
                     call.respond(response.code, response.body)
                 }
             }
