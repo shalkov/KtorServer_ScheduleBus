@@ -1,21 +1,19 @@
 package ru.shalkoff.bus_schedule.plugins.route.admin
 
-import ru.shalkoff.bus_schedule.Consts.ADMIN_ENDPOINT
 import ru.shalkoff.bus_schedule.Consts.USERS_FTL
 import ru.shalkoff.bus_schedule.auth.PasswordEncryptor
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao
 import ru.shalkoff.bus_schedule.db.models.UserRole
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import ru.shalkoff.bus_schedule.Consts.ADMIN_USER_ALL_ENDPOINT
 import ru.shalkoff.bus_schedule.Consts.USER_FTL
-import ru.shalkoff.bus_schedule.auth.withRoles
 import ru.shalkoff.bus_schedule.controllers.AdminController
 
 /**
@@ -28,7 +26,7 @@ fun Application.configureRoutingAdminUser() {
     val passwordEncryptor by inject<PasswordEncryptor>()
 
     routing {
-        route("admin/user/all") {
+        route(ADMIN_USER_ALL_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)
@@ -88,7 +86,6 @@ fun Application.configureRoutingAdminUser() {
                     val postParameters: Parameters = call.receiveParameters()
                     val action = postParameters["action"] ?: "new"
                     when (action) {
-                        //todo добавить проверку, чтобы нельзя было добавлять логин, который уже есть в БД
                         "new" -> {
                             val login = postParameters["login"] ?: ""
 
@@ -119,7 +116,7 @@ fun Application.configureRoutingAdminUser() {
                                 )
                         }
                     }
-                    call.respondRedirect(ADMIN_ENDPOINT)
+                    call.respondRedirect(ADMIN_USER_ALL_ENDPOINT)
                 } catch (e: Exception) {
                     adminController.handlerError(call, e)
                 }
@@ -133,7 +130,7 @@ fun Application.configureRoutingAdminUser() {
                     val id = call.request.queryParameters["id"]
                     if (id != null) {
                         userDao.deleteUser(id.toInt())
-                        call.respondRedirect(ADMIN_ENDPOINT)
+                        call.respondRedirect(ADMIN_USER_ALL_ENDPOINT)
                     }
                 } catch (e: Exception) {
                     adminController.handlerError(call, e)

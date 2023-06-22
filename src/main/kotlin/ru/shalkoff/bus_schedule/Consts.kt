@@ -13,8 +13,6 @@ object Consts {
     const val ACCESS_TOKEN_VALIDITY_ML = 1200000L // 20 минут
     const val REFRESH_TOKEN_VALIDITY_ML = 3600000L * 24L * 30L // 30 дней
 
-    const val UNKNOWN_ERROR = "Неизвестная ошибка"
-
     const val FREEMARKER_BASE_PATH = "admin_panel_ftl"
     const val INDEX_FTL = "index.ftl"
     const val USERS_FTL = "users.ftl"
@@ -29,6 +27,7 @@ object Consts {
     const val INDEX_ENDPOINT = "/"
     const val SWAGGER_ENDPOINT = "/swagger"
     const val ADMIN_ENDPOINT = "/admin"
+    const val ADMIN_USER_ALL_ENDPOINT = "/admin/user/all"
     const val ADMIN_SCHEDULE_ENDPOINT = "/admin/schedule"
     const val ADMIN_SCHEDULE_DEPARTURE_ENDPOINT = "/admin/schedule/departure"
     const val AUTH_ENDPOINT = "/auth"
