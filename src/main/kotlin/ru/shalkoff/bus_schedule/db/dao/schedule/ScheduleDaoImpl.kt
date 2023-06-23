@@ -205,8 +205,6 @@ class ScheduleDaoImpl : ScheduleDao {
 
     override suspend fun deleteTimeStart(timeId: Int): Boolean {
         return DbFactory.dbQuery {
-//            val route = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
-//                ?: throw Exception("Не найден маршрут с таким номером")
             val entityTime = EntityTimeStart.find { TimesStart.id eq timeId }.firstOrNull() ?: throw Exception("Не найден ID времени")
             entityTime.delete()
             true
@@ -223,7 +221,7 @@ class ScheduleDaoImpl : ScheduleDao {
 
     private suspend fun createOrGetEntityRouteNumber(routeNumber: String): EntityRouteNumber {
         return DbFactory.dbQuery {
-            // Надо сначала проверить, не занят ли уже этот номер маршрута дргими
+            // Надо сначала проверить, не занят ли уже этот номер маршрута другими
             val routeHasNumber = EntityRoute.find { Routes.number eq routeNumber }.firstOrNull()
             if (routeHasNumber != null) {
                 throw Exception("Этот номер маршрута: $routeNumber уже используется другим расписанием, он должен быть уникальным")
