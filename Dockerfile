@@ -7,7 +7,7 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 # RUN - запустить один раз, когда мы собираем образ.
 # если образ уже создан, то при запуске контейнера, эта команда НЕ будет выполняться
-RUN gradle shadowJar --no-daemon
+RUN gradle shadowJar
 
 # подключаем еще один образ, на основе которого мы будем собирать свой собственный образ.
 FROM openjdk:11
