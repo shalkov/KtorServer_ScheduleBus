@@ -61,5 +61,5 @@ API сервис для получения расписания автобусн
 3. А так же актуальную версия **Docker** (https://docs.docker.com/engine/install/ubuntu/)
 4. Склонирован репозиторий с бекендом(`git clone https://github.com/shalkov/KtorServer_ScheduleBus`)
 5. Далее заходим в папку с бекендом: `cd KtorServer_ScheduleBus/`
-6. И выполнить команду: `docker compose up`
+6. И выполняем команду: `docker compose up`
 7. Всё, сервер должен запуститься и быть доступен по IP адресу
