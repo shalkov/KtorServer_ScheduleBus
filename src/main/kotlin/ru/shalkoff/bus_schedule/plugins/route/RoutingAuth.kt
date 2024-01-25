@@ -10,22 +10,13 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import org.koin.ktor.ext.inject
-import ru.shalkoff.bus_schedule.Consts
-import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_PARAM
-import ru.shalkoff.bus_schedule.Consts.ACCESS_TOKEN_VALIDITY_ML
 import ru.shalkoff.bus_schedule.Consts.AUTH_ENDPOINT
-import ru.shalkoff.bus_schedule.Consts.INDEX_ENDPOINT
 import ru.shalkoff.bus_schedule.Consts.REFRESH_ENDPOINT
-import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_PARAM
-import ru.shalkoff.bus_schedule.Consts.REFRESH_TOKEN_VALIDITY_ML
 import ru.shalkoff.bus_schedule.Consts.REGISTER_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.STATIC_FILES_PATH
 import ru.shalkoff.bus_schedule.Consts.USER_ID
-import ru.shalkoff.bus_schedule.network.request.AuthRequest
 import ru.shalkoff.bus_schedule.network.request.RefreshTokenRequest
-import ru.shalkoff.bus_schedule.network.request.RegisterRequest
-import ru.shalkoff.bus_schedule.network.response.LoginResponse
 import ru.shalkoff.bus_schedule.auth.withRoles
-import ru.shalkoff.bus_schedule.base.BaseResponse
 import ru.shalkoff.bus_schedule.base.generateHttpResponse
 import ru.shalkoff.bus_schedule.controllers.auth.RefreshTokenController
 import ru.shalkoff.bus_schedule.controllers.auth.SignInController
@@ -94,7 +85,7 @@ fun Application.configureRouting() {
         }
 
         // Static plugin. Try to access `/static/index.html`
-        static("/static") {
+        static(STATIC_FILES_PATH) {
             resources("static")
         }
     }

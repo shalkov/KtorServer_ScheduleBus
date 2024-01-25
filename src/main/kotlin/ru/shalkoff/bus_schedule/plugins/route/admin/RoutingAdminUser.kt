@@ -13,6 +13,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.shalkoff.bus_schedule.Consts.ADMIN_USER_ALL_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_USER_DELETE_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_USER_DELETE_URL
+import ru.shalkoff.bus_schedule.Consts.ADMIN_USER_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_USER_URL
 import ru.shalkoff.bus_schedule.Consts.USER_FTL
 import ru.shalkoff.bus_schedule.controllers.AdminController
 
@@ -34,7 +38,9 @@ fun Application.configureRoutingAdminUser() {
                         FreeMarkerContent(
                             USERS_FTL,
                             mapOf(
-                                "users" to userDao.getAllUsers().sortedBy { it.id }
+                                "users" to userDao.getAllUsers().sortedBy { it.id },
+                                "userUrl" to ADMIN_USER_URL,
+                                "userDeleteUrl" to ADMIN_USER_DELETE_URL
                             )
                         )
                     )
@@ -44,7 +50,7 @@ fun Application.configureRoutingAdminUser() {
             }
         }
 
-        route("admin/user") {
+        route(ADMIN_USER_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)
@@ -55,7 +61,8 @@ fun Application.configureRoutingAdminUser() {
                                 USER_FTL,
                                 mapOf(
                                     "action" to action,
-                                    "roles" to UserRole.values()
+                                    "roles" to UserRole.values(),
+                                    "userUrl" to ADMIN_USER_URL
                                 )
                             )
                         )
@@ -69,7 +76,8 @@ fun Application.configureRoutingAdminUser() {
                                         mapOf(
                                             "user" to userDao.getUserById(id.toInt()),
                                             "action" to action,
-                                            "roles" to UserRole.values()
+                                            "roles" to UserRole.values(),
+                                            "userUrl" to ADMIN_USER_URL
                                         )
                                     )
                                 )
@@ -123,7 +131,7 @@ fun Application.configureRoutingAdminUser() {
             }
         }
 
-        route("admin/user/delete") {
+        route(ADMIN_USER_DELETE_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)

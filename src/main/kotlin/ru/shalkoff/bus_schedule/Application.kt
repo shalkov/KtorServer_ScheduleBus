@@ -7,7 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.koin.ktor.ext.inject
-import ru.shalkoff.bus_schedule.auth.JWTHelper
 import ru.shalkoff.bus_schedule.db.DbFactory
 import ru.shalkoff.bus_schedule.db.dao.schedule.ScheduleDao
 import ru.shalkoff.bus_schedule.db.dao.users.UsersDao

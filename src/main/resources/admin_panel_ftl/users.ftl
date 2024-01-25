@@ -20,8 +20,8 @@
                 <td>${emp.fullName}</td>
                 <td>${emp.role}</td>
                 <td>
-                    <a href="/admin/user?action=edit&id=${emp.id}" class="btn btn-secondary float-right mr-2" role="button">Edit</a>
-                    <a href="/admin/user/delete?id=${emp.id}" class="btn btn-danger float-right mr-2" role="button">Delete</a>
+                    <a href="${userUrl}?action=edit&id=${emp.id}" class="btn btn-secondary float-right mr-2" role="button">Edit</a>
+                    <a href="${userDeleteUrl}?id=${emp.id}" class="btn btn-danger float-right mr-2" role="button">Delete</a>
                 </td>
             </tr>
             </#list>
@@ -29,7 +29,7 @@
     </table>
     <div class="container">
         <div class="row">
-            <a href="/admin/user?action=new" class="btn btn-secondary float-right" role="button">New User</a>
+            <a href="${userUrl}?action=new" class="btn btn-secondary float-right" role="button">New User</a>
         </div>
     </div>
 </@layout.mainLayout>

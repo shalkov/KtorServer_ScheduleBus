@@ -1,8 +1,9 @@
 async function login() {
     const userEmail = document.getElementById("login").value;
     const userPassword = document.getElementById("password").value;
+    const authUrl = document.getElementById("authUrl").value;
 
-    fetch("/auth", {
+    fetch(authUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

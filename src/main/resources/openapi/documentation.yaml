@@ -8,6 +8,10 @@ info:
     email: admin@shalkoff.ru
 
 servers:
+  - url: "https://shalkoff.ru/projects/bus"
+  - url: "https://shalkoff.ru"
+  - url: "http://shalkoff.ru"
+  - url: "http://shalkoff.ru/projects/bus"
   - url: "http://0.0.0.0:8080"
 
 security:

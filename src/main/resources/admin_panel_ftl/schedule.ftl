@@ -19,11 +19,11 @@
                 <td>${route.routeNumber}</td>
                 <td>${route.name}</td>
                 <td>${route.description}</td>
-                <td><a href="/admin/schedule/departure?action=showDepartureStart&id=${route.id}" class="btn btn-secondary float-right mr-2" role="button">${route.departureStart.departureFrom}</a></td>
-                <td><a href="/admin/schedule/departure?action=showDepartureEnd&id=${route.id}" class="btn btn-secondary float-right mr-2" role="button">${route.departureEnd.departureFrom}</a></td>
+                <td><a href="${departureUrl}?action=showDepartureStart&id=${route.id}" class="btn btn-secondary float-right mr-2" role="button">${route.departureStart.departureFrom}</a></td>
+                <td><a href="${departureUrl}?action=showDepartureEnd&id=${route.id}" class="btn btn-secondary float-right mr-2" role="button">${route.departureEnd.departureFrom}</a></td>
                 <td>
-                    <a href="/admin/schedule?action=edit&id=${route.id}" class="btn btn-secondary float-right mr-2" role="button">Edit</a>
-                    <a href="/admin/schedule/delete?id=${route.id}" class="btn btn-danger float-right mr-2" role="button">Delete</a>
+                    <a href="${scheduleUrl}?action=edit&id=${route.id}" class="btn btn-secondary float-right mr-2" role="button">Edit</a>
+                    <a href="${scheduleDeleteUrl}?id=${route.id}" class="btn btn-danger float-right mr-2" role="button">Delete</a>
                 </td>
             </tr>
             </#list>
@@ -31,15 +31,15 @@
     </table>
     <div class="container">
         <div class="row">
-            <a href="/admin/schedule?action=new" class="btn btn-secondary float-right" role="button">New Route</a>
+            <a href="${scheduleUrl}?action=new" class="btn btn-secondary float-right" role="button">New Route</a>
         </div>
         <br/>
         <div class="row">
-            <a href="/admin/schedule/departure/new?nameDeparture=Start" class="btn btn-secondary float-right" role="button">New Departure Start</a>
+            <a href="${departureNewUrl}?nameDeparture=Start" class="btn btn-secondary float-right" role="button">New Departure Start</a>
         </div>
         <br/>
         <div class="row">
-            <a href="/admin/schedule/departure/new?nameDeparture=End" class="btn btn-secondary float-right" role="button">New Departure End</a>
+            <a href="${departureNewUrl}?nameDeparture=End" class="btn btn-secondary float-right" role="button">New Departure End</a>
         </div>
     </div>
 </@layout.mainLayout>

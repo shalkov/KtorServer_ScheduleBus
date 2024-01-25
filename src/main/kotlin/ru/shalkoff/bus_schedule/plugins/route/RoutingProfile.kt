@@ -5,6 +5,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import ru.shalkoff.bus_schedule.Consts.USER_PROFILE_ENDPOINT
 import ru.shalkoff.bus_schedule.base.GeneralResponse
 import ru.shalkoff.bus_schedule.base.generateHttpResponse
 import ru.shalkoff.bus_schedule.controllers.auth.AuthCheckerController
@@ -16,7 +17,7 @@ fun Application.configureRoutingProfile() {
 
     routing {
         authenticate {
-            get("user/profile") {
+            get(USER_PROFILE_ENDPOINT) {
                 try {
                     val user = authCheckerController.getUserByToken(call)
                     if (user != null) {

@@ -9,7 +9,17 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 import ru.shalkoff.bus_schedule.Consts
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DELETE_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DELETE_URL
 import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_NEW_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_NEW_URL
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_TIME_DELETE_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_TIME_DELETE_URL
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_TIME_ENDPOINT
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_TIME_URL
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_DEPARTURE_URL
+import ru.shalkoff.bus_schedule.Consts.ADMIN_SCHEDULE_URL
 import ru.shalkoff.bus_schedule.controllers.AdminController
 import ru.shalkoff.bus_schedule.db.dao.schedule.ScheduleDao
 
@@ -38,7 +48,8 @@ fun Application.configureRoutingAdminSchedule() {
                                     mapOf(
                                         "action" to action,
                                         "departureStartList" to scheduleDao.getAllDepartureStart(),
-                                        "departureEndList" to scheduleDao.getAllDepartureEnd()
+                                        "departureEndList" to scheduleDao.getAllDepartureEnd(),
+                                        "scheduleUrl" to ADMIN_SCHEDULE_URL
                                     )
                                 )
                             )
@@ -54,7 +65,8 @@ fun Application.configureRoutingAdminSchedule() {
                                         "action" to action,
                                         "route" to route,
                                         "departureStartList" to scheduleDao.getAllDepartureStart(),
-                                        "departureEndList" to scheduleDao.getAllDepartureEnd()
+                                        "departureEndList" to scheduleDao.getAllDepartureEnd(),
+                                        "scheduleUrl" to ADMIN_SCHEDULE_URL
                                     )
                                 )
                             )
@@ -65,7 +77,12 @@ fun Application.configureRoutingAdminSchedule() {
                                 FreeMarkerContent(
                                     Consts.SCHEDULE_FTL,
                                     mapOf(
-                                        "schedule" to scheduleDao.getAll().sortedBy { it.id }
+                                        "schedule" to scheduleDao.getAll().sortedBy { it.id },
+                                        "departureUrl" to ADMIN_SCHEDULE_DEPARTURE_URL,
+                                        "scheduleUrl" to ADMIN_SCHEDULE_URL,
+                                        "scheduleDeleteUrl" to ADMIN_SCHEDULE_DELETE_URL,
+                                        "departureNewUrl" to ADMIN_SCHEDULE_DEPARTURE_NEW_URL
+
                                     )
                                 )
                             )
@@ -161,7 +178,9 @@ fun Application.configureRoutingAdminSchedule() {
                                 "routeNumber" to route.routeNumber,
                                 "departure" to departure,
                                 "departureName" to departureFrom,
-                                "scheduleTimeList" to timeList
+                                "scheduleTimeList" to timeList,
+                                "timeUrl" to ADMIN_SCHEDULE_DEPARTURE_TIME_URL,
+                                "timeDeleteUrl" to ADMIN_SCHEDULE_DEPARTURE_TIME_DELETE_URL
                             )
                         )
                     )
@@ -171,7 +190,7 @@ fun Application.configureRoutingAdminSchedule() {
             }
         }
 
-        route("admin/schedule/departure/new") {
+        route(ADMIN_SCHEDULE_DEPARTURE_NEW_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)
@@ -209,7 +228,7 @@ fun Application.configureRoutingAdminSchedule() {
             }
         }
 
-        route("admin/schedule/departure/time") {
+        route(ADMIN_SCHEDULE_DEPARTURE_TIME_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)
@@ -332,7 +351,7 @@ fun Application.configureRoutingAdminSchedule() {
             }
         }
 
-        route("admin/schedule/delete") {
+        route(ADMIN_SCHEDULE_DELETE_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)
@@ -345,7 +364,7 @@ fun Application.configureRoutingAdminSchedule() {
             }
         }
 
-        route("admin/schedule/departure/time/delete") {
+        route(ADMIN_SCHEDULE_DEPARTURE_TIME_DELETE_ENDPOINT) {
             get {
                 try {
                     adminController.checkUserAccessAdminPanel(call)
