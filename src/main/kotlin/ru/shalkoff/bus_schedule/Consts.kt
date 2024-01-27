@@ -2,9 +2,9 @@ package ru.shalkoff.bus_schedule
 
 object Consts {
 
-    // TODO Дефолтный путь, где будет находится сервер
-    // Если нужно открытие в корне, изменить на пустую строку: ""
-    private const val PROJECT_DEFAULT_PATH = "/projects/bus"
+    // Дефолтный путь, для всех ссылок.
+    // Если нужно открытие в корне, оставить пустую строку: ""
+    private const val PROJECT_DEFAULT_PATH = ""
 
     const val EMPTY_STRING = ""
 
